@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/item_image"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="#4A4A4A"
+        android:gravity="center"
+        android:text="图片轮播"
+        android:textColor="#ffffff" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#cdcdcd" />
+
+    <TextView
+        android:id="@+id/item_voice"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="#4A4A4A"
+        android:gravity="center"
+        android:text="音频轮播"
+        android:textColor="#ffffff" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#cdcdcd" />
+
+    <TextView
+        android:id="@+id/item_video"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="#4A4A4A"
+        android:gravity="center"
+        android:text="视频播放"
+        android:textColor="#ffffff" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#cdcdcd" />
+
+</LinearLayout>
