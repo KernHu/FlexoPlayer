@@ -1,4 +1,4 @@
-package com.xcion.flexoplayer.voice;
+package com.xcion.player;
 
 import android.app.Service;
 import android.content.Intent;
@@ -20,6 +20,18 @@ class VoicerService extends Service {
     public static final String KEY_DATA_SOURCE = "key_data_source";
     private ArrayList<String> mDataSource;
 
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
@@ -29,9 +41,5 @@ class VoicerService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
+
 }

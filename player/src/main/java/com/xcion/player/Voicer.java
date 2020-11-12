@@ -1,4 +1,4 @@
-package com.xcion.flexoplayer.voice;
+package com.xcion.player;
 
 import android.content.Context;
 import android.content.Intent;
