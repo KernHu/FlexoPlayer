@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.xcion.flexoplayer.voice.VoiceActivity;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView mItemImage;
