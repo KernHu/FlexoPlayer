@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ImageActivity" />
-        <activity android:name=".VoiceActivity" />
+        <activity android:name=".voice.VoiceActivity" />
         <activity android:name=".VideoActivity" />
     </application>
 
