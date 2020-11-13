@@ -1,4 +1,4 @@
-package com.xcion.player;
+package com.xcion.player.audio;
 
 import android.app.Service;
 import android.content.Intent;
@@ -16,15 +16,15 @@ import androidx.annotation.Nullable;
  * describe: This is...
  */
 
-class VoicerService extends Service {
+class AudioService extends Service {
 
     public static final String KEY_DATA_SOURCE = "key_data_source";
     private ArrayList<String> mDataSource;
     private VoicerBinder mBinder = new VoicerBinder();
 
     public class VoicerBinder extends Binder {
-        public VoicerService getService() {
-            return VoicerService.this;
+        public AudioService getService() {
+            return AudioService.this;
         }
     }
 
@@ -39,7 +39,6 @@ class VoicerService extends Service {
     public IBinder onBind(Intent intent) {
 
         mDataSource = intent.getStringArrayListExtra(KEY_DATA_SOURCE);
-
 
         return mBinder;
     }

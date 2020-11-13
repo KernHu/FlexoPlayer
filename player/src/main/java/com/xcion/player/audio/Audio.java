@@ -1,4 +1,4 @@
-package com.xcion.player;
+package com.xcion.player.audio;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+
 
 import java.util.ArrayList;
 
@@ -16,22 +17,22 @@ import java.util.ArrayList;
  * describe: This is...
  */
 
-public class Voicer {
+public class Audio {
 
-    private static Voicer mVoicer;
+    private static Audio mAudio;
     private Context mContext;
     private Intent mIntent;
 
-    public Voicer getInstance(Context context) {
-        synchronized (Voicer.this) {
-            if (mVoicer == null) {
-                mVoicer = new Voicer(context);
+    public Audio getInstance(Context context) {
+        synchronized (Audio.this) {
+            if (mAudio == null) {
+                mAudio = new Audio(context);
             }
-            return mVoicer;
+            return mAudio;
         }
     }
 
-    public Voicer(Context context) {
+    public Audio(Context context) {
         mContext = context;
 
 
@@ -39,8 +40,8 @@ public class Voicer {
 
     public void setDataSource(ArrayList<String> sources) {
 
-        mIntent = new Intent(mContext, VoicerService.class);
-        mIntent.putStringArrayListExtra(VoicerService.KEY_DATA_SOURCE, sources);
+        mIntent = new Intent(mContext, AudioService.class);
+        mIntent.putStringArrayListExtra(AudioService.KEY_DATA_SOURCE, sources);
         mContext.bindService(mIntent, mServiceConnection, Activity.BIND_AUTO_CREATE);
 
     }
@@ -49,8 +50,8 @@ public class Voicer {
     ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            VoicerService.VoicerBinder binder = (VoicerService.VoicerBinder) iBinder;
-            VoicerService service = binder.getService();
+            AudioService.VoicerBinder binder = (AudioService.VoicerBinder) iBinder;
+            AudioService service = binder.getService();
             service.getCurrentPosition();
         }
 
@@ -66,6 +67,6 @@ public class Voicer {
         if (mIntent != null && mContext != null) {
             mContext.stopService(mIntent);
         }
-        mVoicer = null;
+        mAudio = null;
     }
 }
