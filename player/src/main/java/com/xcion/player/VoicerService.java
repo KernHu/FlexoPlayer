@@ -61,4 +61,9 @@ class VoicerService extends Service {
     public void onDestroy() {
         super.onDestroy();
     }
+
+
+    public int getCurrentPosition(){
+        return 12;
+    }
 }

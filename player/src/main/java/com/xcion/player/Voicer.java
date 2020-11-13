@@ -50,6 +50,8 @@ public class Voicer {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             VoicerService.VoicerBinder binder = (VoicerService.VoicerBinder) iBinder;
+            VoicerService service = binder.getService();
+            service.getCurrentPosition();
         }
 
         @Override
