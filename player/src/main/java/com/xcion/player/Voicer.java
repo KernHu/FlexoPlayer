@@ -1,7 +1,11 @@
 package com.xcion.player;
 
+import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 
 import java.util.ArrayList;
 
@@ -37,11 +41,24 @@ public class Voicer {
 
         mIntent = new Intent(mContext, VoicerService.class);
         mIntent.putStringArrayListExtra(VoicerService.KEY_DATA_SOURCE, sources);
-        mContext.startActivity(mIntent);
+        mContext.bindService(mIntent, mServiceConnection, Activity.BIND_AUTO_CREATE);
 
     }
 
+    /**********************************************************************************/
+    ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            VoicerService.VoicerBinder binder = (VoicerService.VoicerBinder) iBinder;
+        }
 
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+
+        }
+    };
+
+    /**********************************************************************************/
     public void onDestroy() {
 
         if (mIntent != null && mContext != null) {
