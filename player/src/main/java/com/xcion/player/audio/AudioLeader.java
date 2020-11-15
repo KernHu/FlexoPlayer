@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.util.Log;
 
 
 import java.util.ArrayList;
@@ -17,24 +18,21 @@ import java.util.ArrayList;
  * describe: This is...
  */
 
-public class Audio {
+public class AudioLeader {
 
-    private static Audio mAudio;
+    private static AudioLeader mAudio;
     private Context mContext;
     private Intent mIntent;
 
-    public Audio getInstance(Context context) {
-        synchronized (Audio.this) {
-            if (mAudio == null) {
-                mAudio = new Audio(context);
-            }
-            return mAudio;
+    public static AudioLeader getInstance(Context context) {
+        if (mAudio == null) {
+            mAudio = new AudioLeader(context);
         }
+        return mAudio;
     }
 
-    public Audio(Context context) {
+    public AudioLeader(Context context) {
         mContext = context;
-
 
     }
 
@@ -50,14 +48,15 @@ public class Audio {
     ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            AudioService.VoicerBinder binder = (AudioService.VoicerBinder) iBinder;
+            AudioService.AudioBinder binder = (AudioService.AudioBinder) iBinder;
             AudioService service = binder.getService();
             service.getCurrentPosition();
+            Log.e("sos", "onServiceConnected>>>");
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-
+            Log.e("sos", "onServiceDisconnected>>>");
         }
     };
 

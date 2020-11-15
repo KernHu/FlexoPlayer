@@ -22,6 +22,10 @@
         <activity android:name=".ImageActivity" />
         <activity android:name=".voice.VoiceActivity" />
         <activity android:name=".VideoActivity" />
+
+
+       <service android:name="com.xcion.player.audio.AudioService"/>
+
     </application>
 
 </manifest>
