@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.xcion.player.AudioTracker;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import androidx.annotation.Nullable;
@@ -27,6 +28,7 @@ public class AudioService extends Service implements AudioListener {
     private AudioTracker mAudioTracker;
     private ArrayList<String> mDataSource;
     private int position = 0;
+    private AudioDecoderThread mAudioDecoder = new AudioDecoderThread();
 
 
     public class AudioBinder extends Binder {
@@ -74,8 +76,15 @@ public class AudioService extends Service implements AudioListener {
 
     private void startPlay() {
         Log.e("sos", "startPlay>>>" + position);
-        mAudioTracker.setSourceUrl(mDataSource.get(position % mDataSource.size()));
-        mAudioTracker.play();
+//        mAudioTracker.setSourceUrl(mDataSource.get(position % mDataSource.size()));
+//        mAudioTracker.play();
+
+        try {
+            mAudioDecoder.startPlay(mDataSource.get(position % mDataSource.size()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
