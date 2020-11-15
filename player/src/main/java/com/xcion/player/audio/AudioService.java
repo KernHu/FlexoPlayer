@@ -50,9 +50,7 @@ class AudioService extends Service {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-
-
+    public int onStartCommand(Intent intent, int flags, int startId) { 
         return START_NOT_STICKY;
     }
 
@@ -62,7 +60,7 @@ class AudioService extends Service {
     }
 
 
-    public int getCurrentPosition(){
+    public int getCurrentPosition() {
         return 12;
     }
 }
