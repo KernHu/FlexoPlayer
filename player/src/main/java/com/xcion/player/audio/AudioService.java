@@ -48,7 +48,14 @@ public class AudioService extends Service implements AudioListener {
     public IBinder onBind(Intent intent) {
 
         mDataSource = intent.getStringArrayListExtra(KEY_DATA_SOURCE);
-        startPlay();
+
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                startPlay();
+            }
+        }.start();
 
         return mBinder;
     }
@@ -75,16 +82,20 @@ public class AudioService extends Service implements AudioListener {
     }
 
     private void startPlay() {
-        Log.e("sos", "startPlay>>>" + position);
+
 //        mAudioTracker.setSourceUrl(mDataSource.get(position % mDataSource.size()));
 //        mAudioTracker.play();
 
-        try {
-            mAudioDecoder.startPlay(mDataSource.get(position % mDataSource.size()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Log.e("sos", "startPlay>>>" + position);
+//            mAudioDecoder.startPlay(mDataSource.get(position % mDataSource.size()));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            Log.e("sos", "IOException>>>" + e.getMessage());
+//        }
 
+
+        AudioTrackManager.getInstance().startPlay(mDataSource.get(position % mDataSource.size()));
     }
 
     @Override

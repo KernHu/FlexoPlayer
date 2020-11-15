@@ -27,16 +27,18 @@ class AudioDecoderThread {
     private boolean eosReceived;
     private int mSampleRate = 0;
     int channel = 0;
-    private final String TAG = "AACPlay";
+    private final String TAG = "sos";
     public void startPlay(String path) throws IOException {
         eosReceived = false;
         //创建MediaExtractor对象用来解AAC封装
         mExtractor = new MediaExtractor();
         try {
             //设置需要MediaExtractor解析的文件的路径
+            Log.d(TAG,"设置需要MediaExtractor解析的文件的路径");
             mExtractor.setDataSource(path);
         } catch (IOException e) {
             e.printStackTrace();
+            Log.e("sos", "解析的文件的路径IOException>>>" + e.getMessage());
         }
 
 
@@ -61,7 +63,7 @@ class AudioDecoderThread {
             long duration = format.getLong(MediaFormat.KEY_DURATION);
             Log.d(TAG,"length:"+duration/1000000);
         }
-
+        Log.d(TAG,"mime>"+mime);
 
         //创建MediaCodec对象
         mDecoder = MediaCodec.createDecoderByType(mime);
