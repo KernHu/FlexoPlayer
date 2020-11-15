@@ -7,7 +7,6 @@ import android.media.MediaCodec;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.xcion.player.audio.AudioError;
 import com.xcion.player.audio.AudioListener;

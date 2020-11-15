@@ -1,4 +1,4 @@
-package com.xcion.flexoplayer.utils;
+package com.xcion.player.audio;
 
 import android.media.AudioFormat;
 import android.media.AudioManager;
