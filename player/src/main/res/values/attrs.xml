@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="FlexoPlayerView">
+        <attr name="fpv_render_mode" format="enum">
+            <enum name="SURFACE_VIEW" value="0" />
+            <enum name="TEXTURE_VIEW" value="1" />
+        </attr>
+        <attr name="fpv_codec_mode" format="enum">
+            <enum name="SOFTWARE_DECODE" value="0" />
+            <enum name="HARDWARE_DECODE" value="1" />
+        </attr>
+
+        <attr name="fpv_display_mode" format="enum">
+            <enum name="FIT_PARENT" value="0" />
+            <enum name="ORIGIN" value="1" />
+        </attr>
+
+        <attr name="fpv_cover_res" format="reference" />
+        <attr name="fpv_voice_usable" format="boolean" />
+        <attr name="fpv_loading_view_res" format="reference" />
+        <attr name="fpv_media_controller_view_res" format="reference" />
+
+    </declare-styleable>
+
+</resources>

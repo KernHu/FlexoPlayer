@@ -25,37 +25,9 @@ public class VideoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
 
-        new Thread(){
-            @Override
-            public void run() {
-                super.run();
-                play();
-            }
-        }.start();
-
-
     }
 
     public void play(){
-        try {
-            MediaPlayer mediaPlayer = new MediaPlayer();
-            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mediaPlayer.setDataSource(voice);
-            mediaPlayer.prepare();// might take long! (for buffering, etc)
-            mediaPlayer.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e("sos","IOException>>>>>>>>>>>>>"+e.toString());
-        }
 
-//        try {
-//            MediaPlayer mediaPlayer = new MediaPlayer();
-//            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-//            mediaPlayer.setDataSource(voice);
-//            mediaPlayer.prepare();// might take long! (for buffering, etc)
-//            mediaPlayer.start();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
     }
 }

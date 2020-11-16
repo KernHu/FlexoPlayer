@@ -4,11 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.util.Log;
 
-import com.xcion.player.AudioTracker;
-
-import java.io.IOException;
 import java.util.ArrayList;
 
 import androidx.annotation.Nullable;

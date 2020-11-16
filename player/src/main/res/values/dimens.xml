@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="media_controller_height">80dp</dimen>
+    <dimen name="media_controller_padding_left">10dp</dimen>
+    <dimen name="media_controller_padding_right">10dp</dimen>
+    <dimen name="media_controller_icon_padding">5dp</dimen>
+    <dimen name="media_controller_margin">10dp</dimen>
+    <dimen name="media_controller_text_size">15sp</dimen>
+    <dimen name="media_controller_seekbar_margin">5dp</dimen>
+</resources>
