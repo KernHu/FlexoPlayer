@@ -22,10 +22,12 @@
         </activity>
         <activity android:name=".ImageActivity" />
         <activity android:name=".voice.VoiceActivity" />
-        <activity android:name=".VideoActivity" />
+        <activity
+            android:name=".VideoActivity"
+            android:hardwareAccelerated="true" />
 
 
-       <service android:name="com.xcion.player.audio.AudioService"/>
+        <service android:name="com.xcion.player.audio.AudioService" />
 
     </application>
 

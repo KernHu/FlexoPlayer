@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="flexo_player_view_background">#535353</color>
     <color name="media_controller_background">#55000000</color>
     <color name="media_controller_text_color">#ffffff</color>
 </resources>
