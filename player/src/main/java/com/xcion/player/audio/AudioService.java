@@ -36,7 +36,7 @@ public class AudioService extends Service implements AudioListener {
     @Override
     public void onCreate() {
         super.onCreate();
-        mAudioTracker = new AudioTracker(this);
+//        mAudioTracker = new AudioTracker(this);
     }
 
     @Nullable

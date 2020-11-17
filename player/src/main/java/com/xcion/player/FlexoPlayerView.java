@@ -13,11 +13,15 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.xcion.player.audio.AudioTracker;
+import com.xcion.player.audio.MCDecoderAudio;
 import com.xcion.player.pojo.MediaTask;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,8 +44,11 @@ public class FlexoPlayerView extends FrameLayout implements MediaPlayer.OnPrepar
     private int mLoadingViewRes;
     private int mMediaControllerViewRes;
 
+    private ExecutorService mExecutorService = Executors.newSingleThreadExecutor();
     private FrameLayout.LayoutParams mMediaParams = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
     private MediaPlayer mMediaPlayer;
+    private AudioTracker mAudioTracker;
+    MCDecoderAudio mMCDecoderAudio;
     private SurfaceView mSurfaceView;
     private SurfaceHolder mSurfaceHolder;
     private TextureView mTextureView;
@@ -105,10 +112,14 @@ public class FlexoPlayerView extends FrameLayout implements MediaPlayer.OnPrepar
         mMediaPlayer.setOnInfoListener(this);
         mMediaPlayer.setOnBufferingUpdateListener(this);
 
+        mAudioTracker = new AudioTracker();
+        mMCDecoderAudio=new MCDecoderAudio();
+
         if (RenderMode.TEXTURE_VIEW.ordinal() == mRenderMode) {
             mTextureView = new TextureView(getContext());
             mTextureView.setSurfaceTextureListener(new SurfaceTextureListener());
             this.addView(mTextureView, mMediaParams);
+            this.setLayerType(LAYER_TYPE_HARDWARE, null);
         } else {
             mSurfaceView = new SurfaceView(getContext());
             mSurfaceHolder = mSurfaceView.getHolder();
@@ -131,16 +142,31 @@ public class FlexoPlayerView extends FrameLayout implements MediaPlayer.OnPrepar
     }
 
     public void startPlay() {
-        prepareMedia(index);
+        mExecutorService.execute(new PlayerRunnable());
     }
 
-    private void prepareMedia(int index) {
+    class PlayerRunnable implements Runnable {
+
+        @Override
+        public void run() {
+            prepare(index);
+        }
+    }
+
+    private void prepare(int index) {
         try {
-            mMediaPlayer.setDataSource(mMediaTasks.get(index).getVideoUri());
+            Log.e("sos", "prepare>>>" + mMediaTasks.get(index).getVideoUri());
+            //mMediaPlayer.setDataSource(mMediaTasks.get(index).getVideoUri());
+            mMediaPlayer.setDataSource("https://vt1.doubanio.com/202011172045/caadc1faf4fdba3dba994f132e2e1faf/view/movie/M/402670836.mp4");
             mMediaPlayer.prepare();
+//            mMediaPlayer.setDataSource("https://webfs.yun.kugou.com/202011172057/6aa1738fff7da4fe46d1b06dd843c63e/G240/M04/13/03/MA4DAF-uTEmAXXGeAEd_1k4NwYo400.mp3");
+//            mMediaPlayer.prepare();
+
+            mMCDecoderAudio.decodeAudio("https://webfs.yun.kugou.com/202011172057/6aa1738fff7da4fe46d1b06dd843c63e/G240/M04/13/03/MA4DAF-uTEmAXXGeAEd_1k4NwYo400.mp3");
+            //mMCDecoderAudio.
         } catch (IOException e) {
             e.printStackTrace();
-            Log.e("sos", "prepareMedia>>"+e.toString());
+            Log.e("sos", "prepareMedia>>" + e.toString());
         }
     }
 
@@ -149,34 +175,35 @@ public class FlexoPlayerView extends FrameLayout implements MediaPlayer.OnPrepar
     /*********************************************************************************************/
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
-        Log.e("sos", "onPrepared>>"+mediaPlayer.isPlaying());
+        Log.e("sos", "onPrepared>>" + mediaPlayer.isPlaying());
         mMediaPlayer.start();
-        mMediaPlayer.setLooping(true);
+        //mMediaPlayer.setLooping(true);
     }
 
     @Override
     public void onVideoSizeChanged(MediaPlayer mediaPlayer, int i, int i1) {
-
+        Log.e("sos", "onVideoSizeChanged>>" + i + "----" + i1);
     }
 
     @Override
     public void onBufferingUpdate(MediaPlayer mediaPlayer, int i) {
-
+        Log.e("sos", "onBufferingUpdate>>" + i);
     }
 
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
-
+        Log.e("sos", "onCompletion>>");
     }
 
     @Override
     public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-        Log.e("sos", "onError>>"+i);
+        Log.e("sos", "onError>>" + i);
         return false;
     }
 
     @Override
     public boolean onInfo(MediaPlayer mediaPlayer, int i, int i1) {
+        Log.e("sos", "onInfo>>" + i + "---" + i1);
         return false;
     }
     /*********************************************************************************************/
@@ -189,17 +216,18 @@ public class FlexoPlayerView extends FrameLayout implements MediaPlayer.OnPrepar
 
         @Override
         public void surfaceCreated(SurfaceHolder surfaceHolder) {
+            Log.e("sos", "surfaceCreated");
             mMediaPlayer.setDisplay(surfaceHolder);
         }
 
         @Override
         public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-
+            Log.e("sos", "surfaceChanged");
         }
 
         @Override
         public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-
+            Log.e("sos", "surfaceDestroyed");
         }
     }
     /*********************************************************************************************/
@@ -213,6 +241,7 @@ public class FlexoPlayerView extends FrameLayout implements MediaPlayer.OnPrepar
 
         @Override
         public void onSurfaceTextureAvailable(android.graphics.SurfaceTexture surfaceTexture, int i, int i1) {
+            Log.e("sos", "SurfaceTexture准备就绪>>>" + i);
             // SurfaceTexture准备就绪
             mMediaPlayer.setSurface(new Surface(surfaceTexture));
             //mMediaPlayer.prepareAsync();
@@ -221,17 +250,22 @@ public class FlexoPlayerView extends FrameLayout implements MediaPlayer.OnPrepar
         @Override
         public void onSurfaceTextureSizeChanged(android.graphics.SurfaceTexture surfaceTexture, int i, int i1) {
             // SurfaceTexture缓冲大小变化
+            Log.e("sos", "SurfaceTexture缓冲大小变化>>>" + i);
         }
 
         @Override
         public boolean onSurfaceTextureDestroyed(android.graphics.SurfaceTexture surfaceTexture) {
             // SurfaceTexture即将被销毁
+            mMediaPlayer.stop();
+            mMediaPlayer.release();
+            Log.e("sos", "SurfaceTexture即将被销毁>>>");
             return false;
         }
 
         @Override
         public void onSurfaceTextureUpdated(android.graphics.SurfaceTexture surfaceTexture) {
             // SurfaceTexture通过updateImage更新
+            Log.e("sos", "SurfaceTexture通过updateImage更新>>>");
         }
     }
     /*********************************************************************************************/

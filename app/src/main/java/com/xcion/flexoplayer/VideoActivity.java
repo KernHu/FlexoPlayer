@@ -45,13 +45,9 @@ public class VideoActivity extends AppCompatActivity {
         voices.add("来，跟著我来，拿一面白旗在你们的手里??不是上面写著激动怨毒，鼓励残杀字样的白旗，也不是涂著不洁净血液的标记的白旗，也不是画著忏悔与咒语的白旗(把忏悔画在你们的心里)；");
         voices.add("悄悄是别离的笙箫，夏虫也为我沉默，沉默是今晚的康桥。——徐志摩《再别康桥》");
         mMediaTasks.add(new MediaTask("https://mallcos.heli33.com/xcion/201706092014.mp4", voices, images, messages));
+
+
         mFlexoPlayerView.setMediaTask(mMediaTasks);
-
-        play();
-    }
-
-    public void play() {
-
         mFlexoPlayerView.startPlay();
     }
 }

@@ -8,6 +8,6 @@
         android:id="@+id/flexo_player_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:fpv_render_mode="TEXTURE_VIEW" />
+        app:fpv_render_mode="SURFACE_VIEW" />
 
 </FrameLayout>
