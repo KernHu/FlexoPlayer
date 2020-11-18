@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.xcion.flexoplayer.image.ImageActivity;
 import com.xcion.flexoplayer.voice.VoiceActivity;
+import com.xcion.flexoplayer.voide.VideoActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 

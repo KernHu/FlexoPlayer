@@ -1,6 +1,8 @@
-package com.xcion.flexoplayer;
+package com.xcion.flexoplayer.image;
 
 import android.os.Bundle;
+
+import com.xcion.flexoplayer.R;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;

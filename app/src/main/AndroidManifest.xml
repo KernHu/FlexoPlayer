@@ -20,10 +20,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ImageActivity" />
+        <activity android:name=".image.ImageActivity" />
         <activity android:name=".voice.VoiceActivity" />
         <activity
-            android:name=".VideoActivity"
+            android:name=".voide.VideoActivity"
             android:hardwareAccelerated="true" />
 
 
