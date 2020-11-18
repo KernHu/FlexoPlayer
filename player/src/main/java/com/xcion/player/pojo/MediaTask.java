@@ -1,5 +1,6 @@
 package com.xcion.player.pojo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,23 +12,17 @@ import java.util.List;
 public class MediaTask {
 
     public String videoUri;
-    public List<String> voiceUriList;
-    public List<String> imageUriList;
-    public List<String> messageList;
+    public ArrayList<String> voiceUriList;
+    public ArrayList<StreamTask> streamTasks;
+    public ArrayList<String> messageList;
 
     public MediaTask() {
     }
 
-    public MediaTask(String videoUri, List<String> voiceUriList, List<String> imageUriList) {
+    public MediaTask(String videoUri, ArrayList<String> voiceUriList, ArrayList<StreamTask> streamTasks, ArrayList<String> messageList) {
         this.videoUri = videoUri;
         this.voiceUriList = voiceUriList;
-        this.imageUriList = imageUriList;
-    }
-
-    public MediaTask(String videoUri, List<String> voiceUriList, List<String> imageUriList, List<String> messageList) {
-        this.videoUri = videoUri;
-        this.voiceUriList = voiceUriList;
-        this.imageUriList = imageUriList;
+        this.streamTasks = streamTasks;
         this.messageList = messageList;
     }
 
@@ -43,33 +38,23 @@ public class MediaTask {
         return voiceUriList;
     }
 
-    public void setVoiceUriList(List<String> voiceUriList) {
+    public void setVoiceUriList(ArrayList<String> voiceUriList) {
         this.voiceUriList = voiceUriList;
     }
 
-    public List<String> getImageUriList() {
-        return imageUriList;
+    public List<StreamTask> getStreamTasks() {
+        return streamTasks;
     }
 
-    public void setImageUriList(List<String> imageUriList) {
-        this.imageUriList = imageUriList;
+    public void setStreamTasks(ArrayList<StreamTask> streamTasks) {
+        this.streamTasks = streamTasks;
     }
 
     public List<String> getMessageList() {
         return messageList;
     }
 
-    public void setMessageList(List<String> messageList) {
+    public void setMessageList(ArrayList<String> messageList) {
         this.messageList = messageList;
-    }
-
-    @Override
-    public String toString() {
-        return "MediaTask{" +
-                "videoUri='" + videoUri + '\'' +
-                ", voiceUriList=" + voiceUriList +
-                ", imageUriList=" + imageUriList +
-                ", messageList=" + messageList +
-                '}';
     }
 }

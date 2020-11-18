@@ -1,26 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <!--****************************************-->
+    <!--****************************************-->
     <declare-styleable name="FlexoPlayerView">
+        <attr name="fpv_template" format="enum">
+            <enum name="just_stream" value="0" />
+            <enum name="just_video" value="1" />
+            <enum name="both_audio_stream" value="2" />
+            <enum name="both_audio_video" value="3" />
+            <enum name="all" value="4" />
+        </attr>
         <attr name="fpv_render_mode" format="enum">
-            <enum name="SURFACE_VIEW" value="0" />
-            <enum name="TEXTURE_VIEW" value="1" />
+            <enum name="surface_view" value="0" />
+            <enum name="texture_view" value="1" />
         </attr>
         <attr name="fpv_codec_mode" format="enum">
-            <enum name="SOFTWARE_DECODE" value="0" />
-            <enum name="HARDWARE_DECODE" value="1" />
+            <enum name="software" value="0" />
+            <enum name="hardware" value="1" />
         </attr>
-
         <attr name="fpv_display_mode" format="enum">
-            <enum name="FIT_PARENT" value="0" />
-            <enum name="ORIGIN" value="1" />
+            <enum name="fit_parent" value="0" />
+            <enum name="origin" value="1" />
         </attr>
-
+        <attr name="fpv_pre_cache" format="boolean" />
+        <attr name="fpv_mirror" format="boolean" />
+        <attr name="fpv_display_orientation" format="integer" />
+        <attr name="fpv_volume" format="float" />
         <attr name="fpv_cover_res" format="reference" />
         <attr name="fpv_voice_usable" format="boolean" />
         <attr name="fpv_loading_view_res" format="reference" />
         <attr name="fpv_media_controller_view_res" format="reference" />
-
     </declare-styleable>
+    <!--****************************************-->
+    <!--****************************************-->
+    <declare-styleable name="StreamPlayerView">
+        <attr name="spv_scrolling" format="enum">
+            <enum name="vertical" value="0" />
+            <enum name="horizontal" value="1" />
+        </attr>
+        <attr name="spv_smooth_rate" format="float" />
+        <attr name="spv_delayed" format="integer" />
+    </declare-styleable>
+    <!--****************************************-->
+    <!--****************************************-->
 
 </resources>

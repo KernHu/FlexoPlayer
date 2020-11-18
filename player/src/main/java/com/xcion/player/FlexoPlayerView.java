@@ -13,9 +13,9 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.xcion.player.audio.AudioTracker;
 import com.xcion.player.audio.MCDecoderAudio;
 import com.xcion.player.pojo.MediaTask;
+import com.xcion.player.stream.StreamPlayerView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,29 +33,41 @@ import androidx.annotation.Nullable;
  * describe: This is...
  */
 
-public class FlexoPlayerView extends FrameLayout implements MediaPlayer.OnPreparedListener, MediaPlayer.OnVideoSizeChangedListener,
+public class FlexoPlayerView extends FrameLayout implements FlexoPlayerLifecycle, MediaPlayer.OnPreparedListener, MediaPlayer.OnVideoSizeChangedListener,
         MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener, MediaPlayer.OnBufferingUpdateListener {
 
-    private int mRenderMode;
-    private int mCodecMode;
-    private int mDisplayMode;
-    private int mCoverRes;
-    private boolean mVoiceUsable;
-    private int mLoadingViewRes;
-    private int mMediaControllerViewRes;
+    private int template;
+    private int displayOrientation;
+    private float volume;
+    private boolean mirror;
+    private boolean preCache;
+    private int renderMode;
+    private int codecMode;
+    private int displayMode;
+    private int coverRes;
+    private int loadingViewRes;
+    private int mediaControllerViewRes;
 
     private ExecutorService mExecutorService = Executors.newSingleThreadExecutor();
-    private FrameLayout.LayoutParams mMediaParams = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+    private FrameLayout.LayoutParams mParams = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
     private MediaPlayer mMediaPlayer;
-    private AudioTracker mAudioTracker;
-    MCDecoderAudio mMCDecoderAudio;
+    private MCDecoderAudio mMCDecoderAudio;
     private SurfaceView mSurfaceView;
     private SurfaceHolder mSurfaceHolder;
     private TextureView mTextureView;
+    private StreamPlayerView mStreamPlayerView;
     private View mLoadingView;
     private View mMediaControllerView;
     private List<MediaTask> mMediaTasks = new ArrayList<>();
     private int index = 0;
+
+    public enum Template {
+        JUST_STREAM,
+        JUST_VIDEO,
+        BOTH_AUDIO_STREAM,
+        BOTH_AUDIO_VIDEO,
+        ALL
+    }
 
     public enum RenderMode {
         SURFACE_VIEW,
@@ -63,13 +75,65 @@ public class FlexoPlayerView extends FrameLayout implements MediaPlayer.OnPrepar
     }
 
     public enum CodecMode {
-        SOFTWARE_DECODE,
-        HARDWARE_DECODE
+        SOFTWARE,
+        HARDWARE
     }
 
     public enum DisplayMode {
         FIT_PARENT,
         ORIGIN
+    }
+
+    public void setTemplate(Template template) {
+        this.template = template.ordinal();
+    }
+
+    public void setDisplayOrientation(DisplayMode displayOrientation) {
+        this.displayOrientation = displayOrientation.ordinal();
+    }
+
+    public void setVolume(float volume) {
+        this.volume = volume;
+    }
+
+    public void setMirror(boolean mirror) {
+        this.mirror = mirror;
+    }
+
+    public void setPreCache(boolean preCache) {
+        this.preCache = preCache;
+    }
+
+    public void setRenderMode(RenderMode renderMode) {
+        this.renderMode = renderMode.ordinal();
+    }
+
+    public void setDisplayMode(DisplayMode displayMode) {
+        this.displayMode = displayMode.ordinal();
+    }
+
+    public int getCoverRes() {
+        return coverRes;
+    }
+
+    public void setCoverRes(int coverRes) {
+        this.coverRes = coverRes;
+    }
+
+    public int getLoadingViewRes() {
+        return loadingViewRes;
+    }
+
+    public void setLoadingViewRes(int loadingViewRes) {
+        this.loadingViewRes = loadingViewRes;
+    }
+
+    public int getMediaControllerViewRes() {
+        return mediaControllerViewRes;
+    }
+
+    public void setMediaControllerViewRes(int mediaControllerViewRes) {
+        this.mediaControllerViewRes = mediaControllerViewRes;
     }
 
     public FlexoPlayerView(@NonNull Context context) {
@@ -87,13 +151,13 @@ public class FlexoPlayerView extends FrameLayout implements MediaPlayer.OnPrepar
 
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.FlexoPlayerView);
         try {
-            mRenderMode = a.getInt(R.styleable.FlexoPlayerView_fpv_render_mode, RenderMode.SURFACE_VIEW.ordinal());
-            mCodecMode = a.getInt(R.styleable.FlexoPlayerView_fpv_codec_mode, CodecMode.HARDWARE_DECODE.ordinal());
-            mDisplayMode = a.getInt(R.styleable.FlexoPlayerView_fpv_display_mode, DisplayMode.FIT_PARENT.ordinal());
-            mVoiceUsable = a.getBoolean(R.styleable.FlexoPlayerView_fpv_voice_usable, true);
-            mCoverRes = a.getResourceId(R.styleable.FlexoPlayerView_fpv_cover_res, R.drawable.default_video_cover);
-            mLoadingViewRes = a.getResourceId(R.styleable.FlexoPlayerView_fpv_loading_view_res, R.layout.fpv_loading_view);
-            mMediaControllerViewRes = a.getResourceId(R.styleable.FlexoPlayerView_fpv_media_controller_view_res, R.layout.fpv_media_controller_view);
+            template = a.getInt(R.styleable.FlexoPlayerView_fpv_template, Template.ALL.ordinal());
+            renderMode = a.getInt(R.styleable.FlexoPlayerView_fpv_render_mode, RenderMode.SURFACE_VIEW.ordinal());
+            codecMode = a.getInt(R.styleable.FlexoPlayerView_fpv_codec_mode, CodecMode.HARDWARE.ordinal());
+            displayMode = a.getInt(R.styleable.FlexoPlayerView_fpv_display_mode, DisplayMode.FIT_PARENT.ordinal());
+            coverRes = a.getResourceId(R.styleable.FlexoPlayerView_fpv_cover_res, R.drawable.default_video_cover);
+            loadingViewRes = a.getResourceId(R.styleable.FlexoPlayerView_fpv_loading_view_res, R.layout.fpv_loading_view);
+            mediaControllerViewRes = a.getResourceId(R.styleable.FlexoPlayerView_fpv_media_controller_view_res, R.layout.fpv_media_controller_view);
         } finally {
             a.recycle();
         }
@@ -101,7 +165,29 @@ public class FlexoPlayerView extends FrameLayout implements MediaPlayer.OnPrepar
         initView();
     }
 
-    private void initView() {
+    @Override
+    public void onCreateStream() {
+
+        mStreamPlayerView = new StreamPlayerView(getContext());
+        mStreamPlayerView
+                .setScrolling(StreamPlayerView.Scrolling.SCROLLING_HORIZONTAL.ordinal())
+                .setDelayed(3)
+                .setSmoothRate(0.1F)
+                .setStreamTask(null, false)
+                .build();
+        this.addView(mStreamPlayerView, mParams);
+
+    }
+
+    @Override
+    public void onCreateAudio() {
+
+        mMCDecoderAudio = new MCDecoderAudio();
+
+    }
+
+    @Override
+    public void onCreateVideo() {
 
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -112,20 +198,74 @@ public class FlexoPlayerView extends FrameLayout implements MediaPlayer.OnPrepar
         mMediaPlayer.setOnInfoListener(this);
         mMediaPlayer.setOnBufferingUpdateListener(this);
 
-        mAudioTracker = new AudioTracker();
-        mMCDecoderAudio=new MCDecoderAudio();
-
-        if (RenderMode.TEXTURE_VIEW.ordinal() == mRenderMode) {
+        if (RenderMode.TEXTURE_VIEW.ordinal() == renderMode) {
             mTextureView = new TextureView(getContext());
             mTextureView.setSurfaceTextureListener(new SurfaceTextureListener());
-            this.addView(mTextureView, mMediaParams);
+            this.addView(mTextureView, mParams);
             this.setLayerType(LAYER_TYPE_HARDWARE, null);
         } else {
             mSurfaceView = new SurfaceView(getContext());
             mSurfaceHolder = mSurfaceView.getHolder();
             mSurfaceHolder.addCallback(new SurfaceViewCallback());
-            this.addView(mSurfaceView, mMediaParams);
+            this.addView(mSurfaceView, mParams);
         }
+
+    }
+
+    @Override
+    public void onCreate() {
+
+    }
+
+    @Override
+    public void onBindData() {
+
+    }
+
+    @Override
+    public void onResume() {
+
+    }
+
+    @Override
+    public void onPause() {
+
+    }
+
+    @Override
+    public void onLowMemory() {
+
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+
+    }
+
+    @Override
+    public void onDestroy() {
+
+    }
+
+
+    private void initView() {
+
+        if (Template.JUST_STREAM.ordinal() == template) {
+            onCreateStream();
+        } else if (Template.JUST_VIDEO.ordinal() == template) {
+            onCreateVideo();
+        } else if (Template.BOTH_AUDIO_STREAM.ordinal() == template) {
+            onCreateStream();
+            onCreateAudio();
+        } else if (Template.BOTH_AUDIO_VIDEO.ordinal() == template) {
+            onCreateStream();
+            onCreateVideo();
+        } else {
+            onCreateStream();
+            onCreateAudio();
+            onCreateVideo();
+        }
+
     }
 
     public void setMediaTask(List<MediaTask> mediaTasks) {
@@ -163,7 +303,7 @@ public class FlexoPlayerView extends FrameLayout implements MediaPlayer.OnPrepar
 //            mMediaPlayer.prepare();
 
             mMCDecoderAudio.decodeAudio("https://webfs.yun.kugou.com/202011172057/6aa1738fff7da4fe46d1b06dd843c63e/G240/M04/13/03/MA4DAF-uTEmAXXGeAEd_1k4NwYo400.mp3");
-            //mMCDecoderAudio.
+
         } catch (IOException e) {
             e.printStackTrace();
             Log.e("sos", "prepareMedia>>" + e.toString());

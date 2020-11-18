@@ -21,7 +21,6 @@ public class AudioService extends Service implements AudioListener {
     public static final String KEY_DATA_SOURCE = "key_data_source";
 
     private AudioBinder mBinder = new AudioBinder();
-    private AudioTracker mAudioTracker;
     private ArrayList<String> mDataSource;
     private int position = 0;
     private AudioDecoderThread mAudioDecoder = new AudioDecoderThread();
