@@ -1,10 +1,11 @@
-package com.xcion.flexoplayer;
+package com.xcion.flexoplayer.voide;
 
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.xcion.flexoplayer.R;
 import com.xcion.player.FlexoPlayerView;
 import com.xcion.player.pojo.MediaTask;
 
