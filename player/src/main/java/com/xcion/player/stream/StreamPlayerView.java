@@ -3,6 +3,7 @@ package com.xcion.player.stream;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -31,12 +32,13 @@ import androidx.recyclerview.widget.RecyclerView;
 public class StreamPlayerView extends RecyclerView implements Lifecycle, Handler.Callback {
 
     public enum Scrolling {
+        SCROLLING_HORIZONTAL,
         SCROLLING_VERTICAL,
-        SCROLLING_HORIZONTAL
     }
 
     private Handler mHandler = new Handler(this);
-    private  PagerSnapHelper mPagerSnapHelper = new PagerSnapHelper();
+    private Handler mMainHandler = new Handler(Looper.getMainLooper());
+    private PagerSnapHelper mPagerSnapHelper = new PagerSnapHelper();
     private int scrolling;
     private float smoothRate;
     private int delayed;
@@ -114,7 +116,8 @@ public class StreamPlayerView extends RecyclerView implements Lifecycle, Handler
         onCreate();
     }
 
-    private void startPostDelayed() {
+    public void startPostDelayed() {
+        Log.e("sos", "startPostDelayed>>>");
         mHandler.postDelayed(runnable, getDelayed() * 1000);
     }
 
@@ -131,8 +134,10 @@ public class StreamPlayerView extends RecyclerView implements Lifecycle, Handler
 
     @Override
     public boolean handleMessage(@NonNull Message message) {
-        position = position < mStreamAdapter.getItemCount() ? position++ : 0;
-        this.smoothScrollToPosition(position);
+        position++;
+        position = (position > mStreamAdapter.getItemCount() - 1) ? 0 : position;
+        Log.e("sos", "position>>>" + position);
+        this.scrollToPosition(position);
         startPostDelayed();
         return false;
     }
@@ -145,18 +150,23 @@ public class StreamPlayerView extends RecyclerView implements Lifecycle, Handler
 
         mStreamAdapter = new StreamAdapter(getContext(), streamTask);
         this.setAdapter(mStreamAdapter);
-
-    }
-
-    @Override
-    public void onBindData() {
-        mStreamAdapter.setUpdate(streamTask);
         mPagerSnapHelper.attachToRecyclerView(this);
     }
 
     @Override
+    public void onBindData() {
+        mMainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                mStreamAdapter.setUpdate(streamTask);
+            }
+        });
+    }
+
+    @Override
     public void onResume() {
-        startPostDelayed();
+        Log.e("sos", "onResume>>>");
+        //startPostDelayed();
     }
 
     @Override

@@ -1,85 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/voice_progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left"
-        android:layout_margin="20dp" />
-
-    <TextView
-        android:id="@+id/voice_duration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_margin="20dp" />
-
-    <SeekBar
-        android:id="@+id/voice_seek_bar"
+    <com.xcion.player.FlexoPlayerView
+        android:id="@+id/flexo_player_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/voice_play"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="#009688"
-            android:gravity="center"
-            android:paddingTop="18dp"
-            android:paddingBottom="18dp"
-            android:text="播放"
-            android:textColor="#ffffff" />
-
-        <TextView
-            android:id="@+id/voice_pause"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="#4CAF50"
-            android:gravity="center"
-            android:paddingTop="18dp"
-            android:paddingBottom="18dp"
-            android:text="暂停"
-            android:textColor="#ffffff" />
-
-        <TextView
-            android:id="@+id/voice_previous"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="#8BC34A"
-            android:gravity="center"
-            android:paddingTop="18dp"
-            android:paddingBottom="18dp"
-            android:text="上一曲"
-            android:textColor="#ffffff" />
-
-        <TextView
-            android:id="@+id/voice_next"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="#CDDC39"
-            android:gravity="center"
-            android:paddingTop="18dp"
-            android:paddingBottom="18dp"
-            android:text="下一曲"
-            android:textColor="#ffffff" />
-
-    </LinearLayout>
-
+        android:layout_height="match_parent"
+        app:fpv_codec_mode="hardware"
+        app:fpv_cover_res="@drawable/default_image_cover"
+        app:fpv_display_mode="fit_parent"
+        app:fpv_display_orientation="0"
+        app:fpv_loading_view_res="@layout/fpv_loading_view"
+        app:fpv_media_controller_view_res="@layout/fpv_media_controller_view"
+        app:fpv_mirror="true"
+        app:fpv_pre_cache="true"
+        app:fpv_render_mode="texture_view"
+        app:fpv_template="both_audio_stream"
+        app:fpv_volume="10" />
 
 </FrameLayout>

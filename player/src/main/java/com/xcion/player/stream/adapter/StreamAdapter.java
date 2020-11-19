@@ -1,6 +1,7 @@
 package com.xcion.player.stream.adapter;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -40,10 +41,10 @@ public class StreamAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = null;
         if (viewType == StreamTask.TYPE_IMAGE) {
-            view = ViewGroup.inflate(mContext, R.layout.item_style_image_large, null);
+            view = LayoutInflater.from(mContext).inflate(R.layout.item_style_image_large, parent, false);
             return new ImageViewHolder(view);
         } else if (viewType == StreamTask.TYPE_GIF) {
-            view = ViewGroup.inflate(mContext, R.layout.item_style_image_large, null);
+            view = LayoutInflater.from(mContext).inflate(R.layout.item_style_image_large, parent, false);
             return new ImageViewHolder(view);
         }
         return null;
@@ -82,7 +83,7 @@ public class StreamAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     .apply(new RequestOptions()
                             .skipMemoryCache(false)
                             .diskCacheStrategy(DiskCacheStrategy.ALL))
-                    .placeholder(R.drawable.default_image_cover)
+                    .placeholder(R.drawable.image_default_cover)
                     .into(imageVH.mImageLargeIV);
 
         } else if (holder instanceof GifViewHolder) {
@@ -95,7 +96,7 @@ public class StreamAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     .apply(new RequestOptions()
                             .skipMemoryCache(false)
                             .diskCacheStrategy(DiskCacheStrategy.ALL))
-                    .placeholder(R.drawable.default_image_cover)
+                    .placeholder(R.drawable.image_default_cover)
                     .into(gifVH.mGifLargeIV);
 
         }

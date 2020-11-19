@@ -17,7 +17,7 @@
         app:fpv_mirror="true"
         app:fpv_pre_cache="true"
         app:fpv_render_mode="texture_view"
-        app:fpv_template="just_stream"
+        app:fpv_template="both_audio_video"
         app:fpv_volume="10" />
 
 </FrameLayout>

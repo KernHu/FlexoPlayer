@@ -34,10 +34,19 @@ public class VideoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_video);
 
         mFlexoPlayerView = findViewById(R.id.flexo_player_view);
-
-
-
         mFlexoPlayerView.setMediaTask(DataUtils.getTask());
-        mFlexoPlayerView.startPlay();
+        //mFlexoPlayerView.startPlay();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFlexoPlayerView.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mFlexoPlayerView.onDestroy();
     }
 }
