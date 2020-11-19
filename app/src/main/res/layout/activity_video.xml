@@ -8,6 +8,16 @@
         android:id="@+id/flexo_player_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:fpv_render_mode="SURFACE_VIEW" />
+        app:fpv_codec_mode="hardware"
+        app:fpv_cover_res="@drawable/default_image_cover"
+        app:fpv_display_mode="fit_parent"
+        app:fpv_display_orientation="0"
+        app:fpv_loading_view_res="@layout/fpv_loading_view"
+        app:fpv_media_controller_view_res="@layout/fpv_media_controller_view"
+        app:fpv_mirror="true"
+        app:fpv_pre_cache="true"
+        app:fpv_render_mode="texture_view"
+        app:fpv_template="just_stream"
+        app:fpv_volume="10" />
 
 </FrameLayout>

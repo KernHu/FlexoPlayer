@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import com.bumptech.glide.Glide;
 import com.xcion.player.Lifecycle;
@@ -35,6 +36,7 @@ public class StreamPlayerView extends RecyclerView implements Lifecycle, Handler
     }
 
     private Handler mHandler = new Handler(this);
+    private  PagerSnapHelper mPagerSnapHelper = new PagerSnapHelper();
     private int scrolling;
     private float smoothRate;
     private int delayed;
@@ -73,9 +75,11 @@ public class StreamPlayerView extends RecyclerView implements Lifecycle, Handler
     }
 
     public StreamPlayerView setStreamTask(ArrayList<StreamTask> streamTask, boolean isAppend) {
-        if (!isAppend)
-            this.streamTask.clear();
-        this.streamTask.addAll(streamTask);
+        if (streamTask != null) {
+            if (!isAppend)
+                this.streamTask.clear();
+            this.streamTask.addAll(streamTask);
+        }
         return this;
     }
 
@@ -142,13 +146,12 @@ public class StreamPlayerView extends RecyclerView implements Lifecycle, Handler
         mStreamAdapter = new StreamAdapter(getContext(), streamTask);
         this.setAdapter(mStreamAdapter);
 
-        PagerSnapHelper mPagerSnapHelper = new PagerSnapHelper();
-        mPagerSnapHelper.attachToRecyclerView(this);
     }
 
     @Override
     public void onBindData() {
         mStreamAdapter.setUpdate(streamTask);
+        mPagerSnapHelper.attachToRecyclerView(this);
     }
 
     @Override

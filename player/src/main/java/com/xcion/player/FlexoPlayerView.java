@@ -295,14 +295,23 @@ public class FlexoPlayerView extends FrameLayout implements FlexoPlayerLifecycle
 
     private void prepare(int index) {
         try {
-            Log.e("sos", "prepare>>>" + mMediaTasks.get(index).getVideoUri());
-            //mMediaPlayer.setDataSource(mMediaTasks.get(index).getVideoUri());
-            mMediaPlayer.setDataSource("https://vt1.doubanio.com/202011172045/caadc1faf4fdba3dba994f132e2e1faf/view/movie/M/402670836.mp4");
-            mMediaPlayer.prepare();
+            if (mMediaPlayer != null) {
+                mMediaPlayer.setDataSource(mMediaTasks.get(index).getVideoUri());
+                mMediaPlayer.prepare();
+            }
+            //mMediaPlayer.setDataSource("https://vt1.doubanio.com/202011172045/caadc1faf4fdba3dba994f132e2e1faf/view/movie/M/402670836.mp4");
+
 //            mMediaPlayer.setDataSource("https://webfs.yun.kugou.com/202011172057/6aa1738fff7da4fe46d1b06dd843c63e/G240/M04/13/03/MA4DAF-uTEmAXXGeAEd_1k4NwYo400.mp3");
 //            mMediaPlayer.prepare();
 
-            mMCDecoderAudio.decodeAudio("https://webfs.yun.kugou.com/202011172057/6aa1738fff7da4fe46d1b06dd843c63e/G240/M04/13/03/MA4DAF-uTEmAXXGeAEd_1k4NwYo400.mp3");
+            //mMCDecoderAudio.decodeAudio("https://webfs.yun.kugou.com/202011172057/6aa1738fff7da4fe46d1b06dd843c63e/G240/M04/13/03/MA4DAF-uTEmAXXGeAEd_1k4NwYo400.mp3");
+            if (mMCDecoderAudio != null) {
+                mMCDecoderAudio.decodeAudio(mMediaTasks.get(index).getAudioUrls().get(0));
+            }
+
+            if (mStreamPlayerView != null) {
+                mStreamPlayerView.setStreamTask(mMediaTasks.get(index).getStreamTasks(), false).build();
+            }
 
         } catch (IOException e) {
             e.printStackTrace();

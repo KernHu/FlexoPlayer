@@ -3,7 +3,7 @@
     android:id="@+id/item_style_image_large_iv"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:scaleType="centerInside"
+    android:scaleType="fitXY"
     android:src="@drawable/default_image_cover">
 
 </ImageView>

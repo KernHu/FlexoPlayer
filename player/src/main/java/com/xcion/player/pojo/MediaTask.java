@@ -12,18 +12,11 @@ import java.util.List;
 public class MediaTask {
 
     public String videoUri;
-    public ArrayList<String> voiceUriList;
+    public ArrayList<String> audioUrls;
     public ArrayList<StreamTask> streamTasks;
     public ArrayList<String> messageList;
 
     public MediaTask() {
-    }
-
-    public MediaTask(String videoUri, ArrayList<String> voiceUriList, ArrayList<StreamTask> streamTasks, ArrayList<String> messageList) {
-        this.videoUri = videoUri;
-        this.voiceUriList = voiceUriList;
-        this.streamTasks = streamTasks;
-        this.messageList = messageList;
     }
 
     public String getVideoUri() {
@@ -34,15 +27,15 @@ public class MediaTask {
         this.videoUri = videoUri;
     }
 
-    public List<String> getVoiceUriList() {
-        return voiceUriList;
+    public ArrayList<String> getAudioUrls() {
+        return audioUrls;
     }
 
-    public void setVoiceUriList(ArrayList<String> voiceUriList) {
-        this.voiceUriList = voiceUriList;
+    public void setAudioUrls(ArrayList<String> audioUrls) {
+        this.audioUrls = audioUrls;
     }
 
-    public List<StreamTask> getStreamTasks() {
+    public ArrayList<StreamTask> getStreamTasks() {
         return streamTasks;
     }
 
@@ -50,11 +43,21 @@ public class MediaTask {
         this.streamTasks = streamTasks;
     }
 
-    public List<String> getMessageList() {
+    public ArrayList<String> getMessageList() {
         return messageList;
     }
 
     public void setMessageList(ArrayList<String> messageList) {
         this.messageList = messageList;
+    }
+
+    @Override
+    public String toString() {
+        return "MediaTask{" +
+                "videoUri='" + videoUri + '\'' +
+                ", audioUrls=" + audioUrls +
+                ", streamTasks=" + streamTasks +
+                ", messageList=" + messageList +
+                '}';
     }
 }
