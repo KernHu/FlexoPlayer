@@ -8,9 +8,16 @@ package com.xcion.player;
  */
 public interface FlexoPlayerLifecycle extends Lifecycle {
 
+    void onCreateController();
+
+    void onCreateTaskbar();
+
     void onCreateStream();
 
     void onCreateAudio();
 
     void onCreateVideo();
+
+    void onCreateLive();
+
 }

@@ -11,12 +11,21 @@ import java.util.List;
  */
 public class MediaTask {
 
+    public String title;
     public String videoUri;
     public ArrayList<String> audioUrls;
     public ArrayList<StreamTask> streamTasks;
     public ArrayList<String> messageList;
 
     public MediaTask() {
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getVideoUri() {

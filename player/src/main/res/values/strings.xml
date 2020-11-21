@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="taskbar_describe">视频任务：%s条；音频任务：%s条；图片流任务：%s条；</string>
+</resources>

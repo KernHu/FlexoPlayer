@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/flexo_player_taskbar"
+    android:layout_width="@dimen/taskbar_width"
+    android:layout_height="match_parent"
+    android:background="@color/media_controller_background" />

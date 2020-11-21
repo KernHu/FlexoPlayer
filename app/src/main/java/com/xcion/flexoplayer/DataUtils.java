@@ -18,6 +18,7 @@ public class DataUtils {
 
         ArrayList<MediaTask> mediaTasks = new ArrayList<>();
         MediaTask task = new MediaTask();
+        task.setTitle("元旦--XCION-播放任务1");
         task.setVideoUri("https://vt1.doubanio.com/202011192008/d343d8a2e9997dda6a68d64b5eb2bcd3/view/movie/M/402590258.mp4");
         ArrayList<String> voiceUris = new ArrayList<>();
         voiceUris.add("https://mr3.doubanio.com/b34a3d1d57508ed942a0f1345eecf369/0/fm/song/p1423875_128k.mp3");

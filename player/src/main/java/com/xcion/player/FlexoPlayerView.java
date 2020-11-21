@@ -2,17 +2,22 @@ package com.xcion.player;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.xcion.player.adapter.TaskbarAdapter;
 import com.xcion.player.audio.MCDecoderAudio;
 import com.xcion.player.pojo.MediaTask;
 import com.xcion.player.stream.StreamPlayerView;
@@ -25,6 +30,11 @@ import java.util.concurrent.Executors;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * author: Kern Hu
@@ -46,7 +56,8 @@ public class FlexoPlayerView extends FrameLayout implements FlexoPlayerLifecycle
     private int displayMode;
     private int coverRes;
     private int loadingViewRes;
-    private int mediaControllerViewRes;
+    private int controllerViewRes;
+    private int taskbarViewRes;
 
     private ExecutorService mExecutorService = Executors.newSingleThreadExecutor();
     private FrameLayout.LayoutParams mParams = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -57,7 +68,10 @@ public class FlexoPlayerView extends FrameLayout implements FlexoPlayerLifecycle
     private TextureView mTextureView;
     private StreamPlayerView mStreamPlayerView;
     private View mLoadingView;
-    private View mMediaControllerView;
+    private View mControllerVie;
+    private View mTaskbarView;
+    private RecyclerView mTaskbarRecyclerView;
+    private TaskbarAdapter mTaskbarAdapter;
     private List<MediaTask> mMediaTasks = new ArrayList<>();
     private int index = 0;
 
@@ -128,13 +142,14 @@ public class FlexoPlayerView extends FrameLayout implements FlexoPlayerLifecycle
         this.loadingViewRes = loadingViewRes;
     }
 
-    public int getMediaControllerViewRes() {
-        return mediaControllerViewRes;
+    public int getControllerViewRes() {
+        return controllerViewRes;
     }
 
-    public void setMediaControllerViewRes(int mediaControllerViewRes) {
-        this.mediaControllerViewRes = mediaControllerViewRes;
+    public void setControllerViewRes(int controllerViewRes) {
+        this.controllerViewRes = controllerViewRes;
     }
+
 
     public FlexoPlayerView(@NonNull Context context) {
         this(context, null);
@@ -157,12 +172,47 @@ public class FlexoPlayerView extends FrameLayout implements FlexoPlayerLifecycle
             displayMode = a.getInt(R.styleable.FlexoPlayerView_fpv_display_mode, DisplayMode.FIT_PARENT.ordinal());
             coverRes = a.getResourceId(R.styleable.FlexoPlayerView_fpv_cover_res, R.drawable.default_video_cover);
             loadingViewRes = a.getResourceId(R.styleable.FlexoPlayerView_fpv_loading_view_res, R.layout.fpv_loading_view);
-            mediaControllerViewRes = a.getResourceId(R.styleable.FlexoPlayerView_fpv_media_controller_view_res, R.layout.fpv_media_controller_view);
+            controllerViewRes = a.getResourceId(R.styleable.FlexoPlayerView_fpv_controller_view_res, R.layout.fpv_controller_view);
+            taskbarViewRes = a.getResourceId(R.styleable.FlexoPlayerView_fpv_taskbar_view_res, R.layout.fpv_taskbar_view);
         } finally {
             a.recycle();
         }
 
         initView();
+    }
+
+    /*****************************************************************************************/
+    /*****************************************************************************************/
+    /*****************************************************************************************/
+    @Override
+    public void onCreateController() {
+
+        mControllerVie = ViewGroup.inflate(getContext(), controllerViewRes, null);
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        lp.gravity = Gravity.BOTTOM;
+        this.addView(mControllerVie, lp);
+        mControllerVie.setVisibility(View.GONE);
+
+    }
+
+    @Override
+    public void onCreateTaskbar() {
+
+        mTaskbarView = ViewGroup.inflate(getContext(), taskbarViewRes, null);
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+        lp.gravity = Gravity.RIGHT;
+        this.addView(mTaskbarView, lp);
+        mTaskbarView.setVisibility(View.GONE);
+        mTaskbarRecyclerView = mTaskbarView.findViewById(R.id.flexo_player_taskbar);
+
+        mTaskbarRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mTaskbarRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        DividerItemDecoration divider = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+        divider.setDrawable(new ColorDrawable(Color.parseColor("#CDCDCD")));
+        mTaskbarRecyclerView.addItemDecoration(divider);
+        mTaskbarAdapter = new TaskbarAdapter(getContext(), null);
+        mTaskbarRecyclerView.setAdapter(mTaskbarAdapter);
+
     }
 
     @Override
@@ -212,6 +262,13 @@ public class FlexoPlayerView extends FrameLayout implements FlexoPlayerLifecycle
 
     }
 
+    @Override
+    public void onCreateLive() {
+
+    }
+    /*****************************************************************************************/
+    /*****************************************************************************************/
+    /*****************************************************************************************/
     @Override
     public void onCreate() {
 
@@ -266,6 +323,8 @@ public class FlexoPlayerView extends FrameLayout implements FlexoPlayerLifecycle
             onCreateVideo();
         }
 
+        onCreateTaskbar();
+        onCreateController();
     }
 
     public void setMediaTask(List<MediaTask> mediaTasks) {
