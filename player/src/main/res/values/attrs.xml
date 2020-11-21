@@ -28,7 +28,8 @@
         <attr name="fpv_volume" format="float" />
         <attr name="fpv_cover_res" format="reference" />
         <attr name="fpv_loading_view_res" format="reference" />
-        <attr name="fpv_media_controller_view_res" format="reference" />
+        <attr name="fpv_controller_view_res" format="reference" />
+        <attr name="fpv_taskbar_view_res" format="reference" />
     </declare-styleable>
     <!--****************************************-->
     <!--****************************************-->

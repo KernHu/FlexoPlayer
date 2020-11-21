@@ -7,4 +7,8 @@
     <dimen name="media_controller_margin">10dp</dimen>
     <dimen name="media_controller_text_size">15sp</dimen>
     <dimen name="media_controller_seekbar_margin">5dp</dimen>
+
+    <!--    -->
+    <dimen name="taskbar_width">100dp</dimen>
+    <dimen name="taskbar_padding">10dp</dimen>
 </resources>

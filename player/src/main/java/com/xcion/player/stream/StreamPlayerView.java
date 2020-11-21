@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide;
 import com.xcion.player.Lifecycle;
 import com.xcion.player.R;
 import com.xcion.player.pojo.StreamTask;
-import com.xcion.player.stream.adapter.StreamAdapter;
+import com.xcion.player.adapter.StreamAdapter;
 import com.xcion.player.widget.SmoothLayoutManager;
 
 import java.util.ArrayList;

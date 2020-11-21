@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="apace_player_state" type="id" />
-    <item name="apace_player_fast_rewind" type="id" />
-    <item name="apace_player_fast_forward" type="id" />
-    <item name="apace_player_seekbar" type="id" />
-    <item name="apace_player_duration" type="id" />
-    <item name="apace_player_progress" type="id" />
+    <item name="flexo_player_state" type="id" />
+    <item name="flexo_player_fast_rewind" type="id" />
+    <item name="flexo_player_fast_forward" type="id" />
+    <item name="flexo_player_seekbar" type="id" />
+    <item name="flexo_player_duration" type="id" />
+    <item name="flexo_player_progress" type="id" />
+
+    <item name="flexo_player_taskbar" type="id" />
 </resources>

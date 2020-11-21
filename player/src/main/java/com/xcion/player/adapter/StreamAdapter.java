@@ -1,4 +1,4 @@
-package com.xcion.player.stream.adapter;
+package com.xcion.player.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,8 +10,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.xcion.player.R;
 import com.xcion.player.pojo.StreamTask;
-import com.xcion.player.stream.holder.GifViewHolder;
-import com.xcion.player.stream.holder.ImageViewHolder;
+import com.xcion.player.viewholder.GifViewHolder;
+import com.xcion.player.viewholder.ImageViewHolder;
 
 import java.util.ArrayList;
 
