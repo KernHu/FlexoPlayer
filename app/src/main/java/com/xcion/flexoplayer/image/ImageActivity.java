@@ -37,12 +37,19 @@ public class ImageActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mFlexoPlayerView.onResume();
+        mFlexoPlayerView.startPlay();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mFlexoPlayerView.onDestroy();
+        mFlexoPlayerView.stopPlay();
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mFlexoPlayerView.recycle();
     }
 }

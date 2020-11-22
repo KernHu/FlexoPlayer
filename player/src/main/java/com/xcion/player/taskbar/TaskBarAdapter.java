@@ -1,4 +1,4 @@
-package com.xcion.player.adapter;
+package com.xcion.player.taskbar;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 
 import com.xcion.player.R;
 import com.xcion.player.pojo.MediaTask;
-import com.xcion.player.viewholder.TaskbarViewHolder;
+import com.xcion.player.taskbar.vh.TaskbarViewHolder;
 
 import java.util.ArrayList;
 
@@ -21,12 +21,12 @@ import androidx.recyclerview.widget.RecyclerView;
  * describe: This is...
  */
 
-public class TaskbarAdapter extends RecyclerView.Adapter<TaskbarViewHolder> {
+public class TaskBarAdapter extends RecyclerView.Adapter<TaskbarViewHolder> {
 
     private Context mContext;
     private ArrayList<MediaTask> mMediaTask = new ArrayList<>();
 
-    public TaskbarAdapter(Context context, ArrayList<MediaTask> mediaTasks) {
+    public TaskBarAdapter(Context context, ArrayList<MediaTask> mediaTasks) {
         mContext = context;
         if (mediaTasks != null && !mediaTasks.isEmpty())
             mMediaTask.addAll(mediaTasks);

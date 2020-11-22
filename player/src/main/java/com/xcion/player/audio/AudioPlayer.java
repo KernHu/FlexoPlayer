@@ -9,8 +9,6 @@ import android.media.MediaFormat;
 import android.text.TextUtils;
 import android.util.Log;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -18,26 +16,25 @@ import java.nio.ByteBuffer;
 /**
  * Author: Kern
  * E-mail: sky580@126.com
- * DateTime: 2020/11/12  00:38
+ * DateTime: 2020/11/13  23:01
  * Intro:
  */
-public class MCDecoderAudio {
-    private static final String TAG = "MCDecoder";
+public class AudioPlayer {
+
+    private static final String TAG = "AudioPlayer";
     private MediaExtractor mediaExtractor;
     private MediaCodec mediaCodec;
     private AudioTrack audioTrack;
-    private String srcPath;
     private boolean isFinish = false;
 
     /**
      * 解码音频
      *
-     * @param srcPath 源文件路径
+     * @param url 源文件路径
      */
-    public void decodeAudio(String srcPath) {
-        this.srcPath = srcPath;
+    public void startPlay(String url) {
         //初始化解码器
-        initMediaCodec();
+        initMediaCodec(url);
         //初始化播放器
         initAudioTrack();
         //开始解码播放
@@ -67,7 +64,7 @@ public class MCDecoderAudio {
             inputBuffer = mediaCodec.getInputBuffer(inputIndex);
             if (inputBuffer != null) {
                 inputBuffer.clear();
-            }else {
+            } else {
                 continue;
             }
             //从流中读取的采用数据的大小
@@ -127,10 +124,10 @@ public class MCDecoderAudio {
     /**
      * 初始化MediaCodec
      */
-    private void initMediaCodec() {
+    private void initMediaCodec(String url) {
         try {
             mediaExtractor = new MediaExtractor();
-            mediaExtractor.setDataSource(srcPath);
+            mediaExtractor.setDataSource(url);
             //找到音频流的索引
             int audioTrackIndex = -1;
             String mime = null;
@@ -178,7 +175,21 @@ public class MCDecoderAudio {
         audioTrack.play();
     }
 
-    public void onDestroy() {
+    public void stopPlay() {
+        audioTrack.stop();
         isFinish = true;
     }
+
+    public void recycle() {
+        audioTrack.stop();
+        isFinish = true;
+        mediaCodec.release();
+        audioTrack.release();
+        mediaExtractor.release();
+        mediaCodec = null;
+        audioTrack = null;
+        mediaExtractor = null;
+    }
+
+
 }

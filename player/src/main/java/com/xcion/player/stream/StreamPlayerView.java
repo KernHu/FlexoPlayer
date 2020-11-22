@@ -12,10 +12,10 @@ import com.bumptech.glide.Glide;
 import com.xcion.player.Lifecycle;
 import com.xcion.player.R;
 import com.xcion.player.pojo.StreamTask;
-import com.xcion.player.adapter.StreamAdapter;
 import com.xcion.player.widget.SmoothLayoutManager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,7 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
  * describe: This is...
  */
 
-public class StreamPlayerView extends RecyclerView implements Lifecycle, Handler.Callback {
+public class StreamPlayerView extends RecyclerView implements Lifecycle<StreamTask>, Handler.Callback {
 
     public enum Scrolling {
         SCROLLING_HORIZONTAL,
@@ -43,6 +43,8 @@ public class StreamPlayerView extends RecyclerView implements Lifecycle, Handler
     private float smoothRate;
     private int delayed;
     private ArrayList<StreamTask> streamTask = new ArrayList<>();
+
+    private StreamAdapter mStreamAdapter;
     private int position;
 
     public int getScrolling() {
@@ -87,13 +89,9 @@ public class StreamPlayerView extends RecyclerView implements Lifecycle, Handler
 
     public void build() {
         onBindData();
-        onResume();
     }
 
     /********************************************************************************************************/
-
-    private StreamAdapter mStreamAdapter;
-
     public StreamPlayerView(@NonNull Context context) {
         this(context, null);
     }
@@ -113,15 +111,26 @@ public class StreamPlayerView extends RecyclerView implements Lifecycle, Handler
         } finally {
             a.recycle();
         }
-        onCreate();
+
+        initView();
     }
 
-    public void startPostDelayed() {
-        Log.e("sos", "startPostDelayed>>>");
+    private void initView() {
+
+        SmoothLayoutManager manager = new SmoothLayoutManager(getContext(), scrolling, false, smoothRate);
+        this.setLayoutManager(manager);
+
+        mStreamAdapter = new StreamAdapter(getContext(), streamTask);
+        this.setAdapter(mStreamAdapter);
+        mPagerSnapHelper.attachToRecyclerView(this);
+
+    }
+
+    protected void startPostDelayed() {
         mHandler.postDelayed(runnable, getDelayed() * 1000);
     }
 
-    private void stopPostDelayed() {
+    protected void stopPostDelayed() {
         mHandler.removeCallbacks(runnable);
     }
 
@@ -136,24 +145,12 @@ public class StreamPlayerView extends RecyclerView implements Lifecycle, Handler
     public boolean handleMessage(@NonNull Message message) {
         position++;
         position = (position > mStreamAdapter.getItemCount() - 1) ? 0 : position;
-        Log.e("sos", "position>>>" + position);
         this.scrollToPosition(position);
         startPostDelayed();
         return false;
     }
 
-    @Override
-    public void onCreate() {
 
-        SmoothLayoutManager manager = new SmoothLayoutManager(getContext(), scrolling, false, smoothRate);
-        this.setLayoutManager(manager);
-
-        mStreamAdapter = new StreamAdapter(getContext(), streamTask);
-        this.setAdapter(mStreamAdapter);
-        mPagerSnapHelper.attachToRecyclerView(this);
-    }
-
-    @Override
     public void onBindData() {
         mMainHandler.post(new Runnable() {
             @Override
@@ -163,29 +160,43 @@ public class StreamPlayerView extends RecyclerView implements Lifecycle, Handler
         });
     }
 
+    /************************************************************************************/
     @Override
-    public void onResume() {
-        Log.e("sos", "onResume>>>");
-        //startPostDelayed();
+    public void setMediaTask(List<StreamTask> tasks) {
+        setMediaTask(tasks, false);
     }
 
     @Override
-    public void onPause() {
+    public void setMediaTask(List<StreamTask> tasks, boolean isAppend) {
+        if (streamTask != null) {
+            if (!isAppend)
+                this.streamTask.clear();
+            this.streamTask.addAll(streamTask);
+        }
+    }
+
+    @Override
+    public void startPlay() {
+        startPostDelayed();
+    }
+
+    @Override
+    public void stopPlay() {
         stopPostDelayed();
     }
 
     @Override
-    public void onLowMemory() {
+    public void lowMemory() {
         Glide.get(getContext()).onLowMemory();
     }
 
     @Override
-    public void onTrimMemory(int level) {
+    public void trimMemory(int level) {
         Glide.get(getContext()).onTrimMemory(level);
     }
 
     @Override
-    public void onDestroy() {
+    public void recycle() {
         stopPostDelayed();
         Glide.get(getContext()).clearMemory();
         Glide.get(getContext()).clearDiskCache();
@@ -194,5 +205,4 @@ public class StreamPlayerView extends RecyclerView implements Lifecycle, Handler
         streamTask.clear();
         streamTask = null;
     }
-
 }
