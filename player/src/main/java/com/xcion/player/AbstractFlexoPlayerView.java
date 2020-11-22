@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import com.xcion.player.media.Lifecycle;
 import com.xcion.player.pojo.MediaTask;
 
 import androidx.annotation.NonNull;

@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/item_task_bar"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="12dp">
+    android:padding="10dp">
 
     <TextView
         android:id="@+id/item_taskbar_title"
@@ -13,7 +13,8 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:singleLine="true"
-        android:textSize="15sp" />
+        android:textColor="@color/task_bar_text_color"
+        android:textSize="@dimen/task_bar_title_text_size" />
 
     <TextView
         android:id="@+id/item_taskbar_describe"
@@ -22,6 +23,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:singleLine="true"
-        android:textSize="12sp" />
+        android:textColor="@color/task_bar_text_color"
+        android:textSize="@dimen/task_bar_describe_text_size" />
 
 </LinearLayout>

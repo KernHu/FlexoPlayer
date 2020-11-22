@@ -1,4 +1,4 @@
-package com.xcion.player;
+package com.xcion.player.media;
 
 import android.view.View;
 

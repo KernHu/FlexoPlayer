@@ -1,4 +1,4 @@
-package com.xcion.player.audio;
+package com.xcion.player.media.audio;
 
 import android.media.AudioFormat;
 import android.media.AudioManager;

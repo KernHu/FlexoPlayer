@@ -26,9 +26,6 @@ public class TaskbarViewHolder extends RecyclerView.ViewHolder {
     public TaskbarViewHolder(@NonNull View itemView) {
         super(itemView);
         mTitleText = itemView.findViewById(R.id.item_taskbar_title);
-        mTitleText.setTextColor(Color.WHITE);
         mDescribeText = itemView.findViewById(R.id.item_taskbar_describe);
-        mDescribeText.setTextColor(Color.WHITE);
-        mDescribeText.setTextSize(TypedValue.COMPLEX_UNIT_SP,12);
     }
 }

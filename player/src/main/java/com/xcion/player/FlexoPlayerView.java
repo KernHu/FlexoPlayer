@@ -11,15 +11,14 @@ import android.view.SurfaceView;
 import android.view.TextureView;
 import android.widget.FrameLayout;
 
-import com.xcion.player.audio.AudioPlayerFactory;
 import com.xcion.player.controller.ControllerFactory;
+import com.xcion.player.media.audio.AudioPlayerFactory;
+import com.xcion.player.media.stream.StreamFactory;
 import com.xcion.player.pojo.MediaTask;
-import com.xcion.player.stream.StreamFactory;
 import com.xcion.player.taskbar.TaskBarFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -65,9 +64,9 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView implements MediaPla
         initView();
     }
 
-    /*****************************************************************************************/
-    /*****************************************************************************************/
-    /*****************************************************************************************/
+    /***********************************************************************************************/
+    /***********************************************************************************************/
+    /***********************************************************************************************/
     @Override
     protected void onCreateController() {
         mControllerFactory = new ControllerFactory(getContext(), getControllerViewRes());
@@ -129,9 +128,9 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView implements MediaPla
     protected void onCreateLive() {
 
     }
-    /*****************************************************************************************/
-    /*****************************************************************************************/
-    /*****************************************************************************************/
+    /***********************************************************************************************/
+    /***********************************************************************************************/
+    /***********************************************************************************************/
 
     @Override
     protected void initView() {
@@ -171,17 +170,17 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView implements MediaPla
 
     }
 
-    /*****************************************************************************************/
-    /*****************************************************************************************/
-    /*****************************************************************************************/
+    /***********************************************************************************************/
+    /***********************************************************************************************/
+    /***********************************************************************************************/
 
     @Override
-    public void setMediaTask(List<MediaTask> tasks) {
+    public void setMediaTask(ArrayList<MediaTask> tasks) {
         setMediaTask(tasks, false);
     }
 
     @Override
-    public void setMediaTask(List<MediaTask> tasks, boolean isAppend) {
+    public void setMediaTask(ArrayList<MediaTask> tasks, boolean isAppend) {
         if (tasks != null && !tasks.isEmpty()) {
             if (!isAppend) {
                 mMediaTasks.clear();
@@ -197,6 +196,10 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView implements MediaPla
 
     @Override
     public void stopPlay() {
+        if (mStreamFactory != null)
+            mStreamFactory.stopPlay();
+        if (mAudioPlayerFactory != null)
+            mAudioPlayerFactory.stopPlay();
 
     }
 
@@ -205,9 +208,9 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView implements MediaPla
 
     }
 
-    /*****************************************************************************************/
-    /*****************************************************************************************/
-    /*****************************************************************************************/
+    /***********************************************************************************************/
+    /***********************************************************************************************/
+    /***********************************************************************************************/
     class PlayerRunnable implements Runnable {
 
         @Override
@@ -225,28 +228,29 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView implements MediaPla
 
         //信息流播放
         if (mStreamFactory != null) {
-            mStreamFactory.setStreamTask(mMediaTasks.get(index).getStreamTasks(), false);
+            mStreamFactory.setMediaTask(mMediaTasks.get(index).getStreamTasks(), false);
         }
 
-        //
+        //音频播放
+        if (mAudioPlayerFactory != null) {
+            mAudioPlayerFactory.setMediaTask(mMediaTasks.get(index).getAudioUrls(), false);
+        }
+
+        //视频播放
         try {
             if (mMediaPlayer != null) {
                 mMediaPlayer.setDataSource(mMediaTasks.get(index).getVideoUri());
                 mMediaPlayer.prepare();
             }
-            if (mAudioPlayerFactory != null) {
-                mAudioPlayerFactory.setMediaTask(mMediaTasks.get(index).getAudioUrls(), false);
-            }
-
         } catch (IOException e) {
             e.printStackTrace();
             Log.e("sos", "prepareMedia>>" + e.toString());
         }
     }
 
-    /*********************************************************************************************/
-    /*********************************************************************************************/
-    /*********************************************************************************************/
+    /***********************************************************************************************/
+    /***********************************************************************************************/
+    /***********************************************************************************************/
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {
         Log.d(TAG, "onPrepared>>" + mediaPlayer.isPlaying());
@@ -279,9 +283,9 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView implements MediaPla
         Log.d(TAG, "onInfo>>" + i + "---" + i1);
         return false;
     }
-    /*********************************************************************************************/
-    /*********************************************************************************************/
-    /*********************************************************************************************/
+    /***********************************************************************************************/
+    /***********************************************************************************************/
+    /***********************************************************************************************/
     /**
      * SurfaceView
      */
@@ -302,9 +306,9 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView implements MediaPla
         Log.d(TAG, "surfaceDestroyed");
     }
 
-    /*********************************************************************************************/
-    /*********************************************************************************************/
-    /*********************************************************************************************/
+    /***********************************************************************************************/
+    /***********************************************************************************************/
+    /***********************************************************************************************/
 
     /**
      * TextureView
@@ -337,7 +341,7 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView implements MediaPla
         // SurfaceTexture通过updateImage更新
         Log.d(TAG, "SurfaceTexture通过updateImage更新>>>");
     }
-    /*********************************************************************************************/
-    /*********************************************************************************************/
-    /*********************************************************************************************/
+    /***********************************************************************************************/
+    /***********************************************************************************************/
+    /***********************************************************************************************/
 }

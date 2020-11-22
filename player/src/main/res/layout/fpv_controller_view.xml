@@ -3,9 +3,7 @@
     android:layout_width="wrap_content"
     android:layout_height="@dimen/media_controller_height"
     android:background="@color/media_controller_background"
-    android:orientation="horizontal"
-    android:paddingLeft="@dimen/media_controller_padding_left"
-    android:paddingRight="@dimen/media_controller_padding_right">
+    android:orientation="horizontal">
 
     <LinearLayout
         android:layout_width="wrap_content"

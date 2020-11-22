@@ -8,10 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.xcion.player.AbstractFactory;
+import com.xcion.player.media.AbstractFactory;
 import com.xcion.player.R;
 import com.xcion.player.pojo.MediaTask;
-import com.xcion.player.pojo.StreamTask;
 
 import java.util.ArrayList;
 
@@ -44,7 +43,9 @@ public class TaskBarFactory extends AbstractFactory {
     public View getView() {
 
         View view = ViewGroup.inflate(context, taskBarViewRes, null);
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(100, FrameLayout.LayoutParams.MATCH_PARENT);
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
+                context.getResources().getDimensionPixelSize(R.dimen.task_bar_width),
+                FrameLayout.LayoutParams.MATCH_PARENT);
         lp.gravity = Gravity.RIGHT;
         view.setLayoutParams(lp);
         view.setVisibility(View.VISIBLE);
@@ -60,9 +61,11 @@ public class TaskBarFactory extends AbstractFactory {
         mRecyclerView = view.findViewById(R.id.flexo_player_taskbar);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
         DividerItemDecoration divider = new DividerItemDecoration(view.getContext(), DividerItemDecoration.VERTICAL);
-        divider.setDrawable(new ColorDrawable(Color.parseColor("#CDCDCD")));
+        divider.setDrawable(new ColorDrawable(Color.parseColor("#FFC5C5C5")));
         mRecyclerView.addItemDecoration(divider);
+
         mTaskBarAdapter = new TaskBarAdapter(view.getContext(), null);
         mRecyclerView.setAdapter(mTaskBarAdapter);
 

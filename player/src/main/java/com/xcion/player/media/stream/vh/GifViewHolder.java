@@ -1,4 +1,4 @@
-package com.xcion.player.stream.vh;
+package com.xcion.player.media.stream.vh;
 
 import android.view.View;
 import android.widget.ImageView;

@@ -3,4 +3,7 @@
     <color name="flexo_player_view_background">#535353</color>
     <color name="media_controller_background">#55000000</color>
     <color name="media_controller_text_color">#ffffff</color>
+
+    <color name="taskbar_split_line">#C5C5C5</color>
+    <color name="task_bar_text_color">#ffffff</color>
 </resources>

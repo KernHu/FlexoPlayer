@@ -1,4 +1,4 @@
-package com.xcion.player.stream;
+package com.xcion.player.media.stream;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -6,10 +6,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 
 import com.bumptech.glide.Glide;
-import com.xcion.player.Lifecycle;
+import com.xcion.player.media.Lifecycle;
 import com.xcion.player.R;
 import com.xcion.player.pojo.StreamTask;
 import com.xcion.player.widget.SmoothLayoutManager;
@@ -162,12 +161,12 @@ public class StreamPlayerView extends RecyclerView implements Lifecycle<StreamTa
 
     /************************************************************************************/
     @Override
-    public void setMediaTask(List<StreamTask> tasks) {
+    public void setMediaTask(ArrayList<StreamTask> tasks) {
         setMediaTask(tasks, false);
     }
 
     @Override
-    public void setMediaTask(List<StreamTask> tasks, boolean isAppend) {
+    public void setMediaTask(ArrayList<StreamTask> tasks, boolean isAppend) {
         if (streamTask != null) {
             if (!isAppend)
                 this.streamTask.clear();

@@ -1,13 +1,15 @@
-package com.xcion.player.stream;
+package com.xcion.player.media.stream;
 
 import android.content.Context;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.xcion.player.AbstractFactory;
+import com.xcion.player.media.AbstractFactory;
+import com.xcion.player.media.Lifecycle;
 import com.xcion.player.pojo.StreamTask;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * author: Kern Hu
@@ -16,7 +18,7 @@ import java.util.ArrayList;
  * describe: This is...
  */
 
-public class StreamFactory extends AbstractFactory {
+public class StreamFactory extends AbstractFactory implements Lifecycle<StreamTask> {
 
     private Context context;
 
@@ -52,13 +54,42 @@ public class StreamFactory extends AbstractFactory {
         mStreamPlayerView = (StreamPlayerView) view;
     }
 
-    public void setStreamTask(ArrayList<StreamTask> streamTask, boolean isAppend) {
 
+    @Override
+    public void setMediaTask(ArrayList<StreamTask> tasks) {
+            setMediaTask(tasks, false);
+    }
+
+    @Override
+    public void setMediaTask(ArrayList<StreamTask> tasks, boolean isAppend) {
         if (mStreamPlayerView != null) {
-            mStreamPlayerView.setStreamTask(streamTask, isAppend).build();
+            mStreamPlayerView.setStreamTask(tasks, isAppend).build();
             mStreamPlayerView.startPlay();
         }
+    }
+
+    @Override
+    public void startPlay() {
 
     }
 
+    @Override
+    public void stopPlay() {
+
+    }
+
+    @Override
+    public void lowMemory() {
+
+    }
+
+    @Override
+    public void trimMemory(int level) {
+
+    }
+
+    @Override
+    public void recycle() {
+
+    }
 }

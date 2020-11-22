@@ -35,7 +35,7 @@ public class TaskBarAdapter extends RecyclerView.Adapter<TaskbarViewHolder> {
     @NonNull
     @Override
     public TaskbarViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.item_taskbar, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.fpv_item_taskbar, parent, false);
         return new TaskbarViewHolder(view);
     }
 
