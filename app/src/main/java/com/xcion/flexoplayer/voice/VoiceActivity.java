@@ -1,14 +1,10 @@
 package com.xcion.flexoplayer.voice;
 
 import android.os.Bundle;
-import android.view.View;
-import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.xcion.flexoplayer.DataUtils;
 import com.xcion.flexoplayer.R;
 import com.xcion.player.FlexoPlayerView;
-import com.xcion.player.audio.AudioLeader;
 import com.xcion.player.pojo.MediaTask;
 
 import java.util.ArrayList;
@@ -41,12 +37,18 @@ public class VoiceActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mFlexoPlayerView.onResume();
+        mFlexoPlayerView.startPlay();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mFlexoPlayerView.onDestroy();
+        mFlexoPlayerView.stopPlay();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mFlexoPlayerView.recycle();
     }
 }

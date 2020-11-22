@@ -1,25 +1,29 @@
 package com.xcion.player;
 
+import com.xcion.player.pojo.MediaTask;
+
+import java.util.List;
+
 /**
  * Author: Kern
  * E-mail: sky580@126.com
  * DateTime: 2020/11/18  23:24
  * Intro:
  */
-public interface Lifecycle {
+public interface Lifecycle<T> {
 
-    void onCreate();
+    void setMediaTask(List<T> tasks);
 
-    void onBindData();
+    void setMediaTask(List<T> tasks, boolean isAppend);
 
-    void onResume();
+    void startPlay();
 
-    void onPause();
+    void stopPlay();
 
-    void onLowMemory();
+    void lowMemory();
 
-    void onTrimMemory(int level);
+    void trimMemory(int level);
 
-    void onDestroy();
+    void recycle();
 
 }
