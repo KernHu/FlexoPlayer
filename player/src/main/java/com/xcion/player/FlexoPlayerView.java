@@ -150,7 +150,6 @@ public class FlexoPlayerView extends FrameLayout implements FlexoPlayerLifecycle
         this.controllerViewRes = controllerViewRes;
     }
 
-
     public FlexoPlayerView(@NonNull Context context) {
         this(context, null);
     }
@@ -161,9 +160,7 @@ public class FlexoPlayerView extends FrameLayout implements FlexoPlayerLifecycle
 
     public FlexoPlayerView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-
         this.setBackgroundColor(getContext().getResources().getColor(R.color.flexo_player_view_background));
-
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.FlexoPlayerView);
         try {
             template = a.getInt(R.styleable.FlexoPlayerView_fpv_template, Template.ALL.ordinal());
