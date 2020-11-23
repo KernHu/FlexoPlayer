@@ -1,26 +1,18 @@
 package com.xcion.player;
 
 import android.content.Context;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.Surface;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.TextureView;
 import android.widget.FrameLayout;
 
 import com.xcion.player.controller.ControllerFactory;
 import com.xcion.player.media.audio.AudioPlayerFactory;
 import com.xcion.player.media.stream.StreamFactory;
+import com.xcion.player.media.video.VideoPlayerFactory;
 import com.xcion.player.pojo.MediaTask;
 import com.xcion.player.taskbar.TaskBarFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,23 +23,17 @@ import androidx.annotation.Nullable;
  * data_time: 11/16/20 8:03 PM
  * describe: This is...
  */
-public class FlexoPlayerView extends AbstractFlexoPlayerView implements MediaPlayer.OnPreparedListener, MediaPlayer.OnVideoSizeChangedListener,
-        MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener, MediaPlayer.OnBufferingUpdateListener,
-        TextureView.SurfaceTextureListener, SurfaceHolder.Callback {
+public class FlexoPlayerView extends AbstractFlexoPlayerView {
 
     private static final String TAG = "FlexoPlayerView";
-    private FrameLayout.LayoutParams mParams = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-    private ExecutorService mExecutorService = Executors.newSingleThreadExecutor();
+
     private ArrayList<MediaTask> mMediaTasks = new ArrayList<>();
-    private MediaPlayer mMediaPlayer;
-    private SurfaceView mSurfaceView;
-    private SurfaceHolder mSurfaceHolder;
-    private TextureView mTextureView;
 
     private ControllerFactory mControllerFactory;
     private TaskBarFactory mTaskBarFactory;
     private StreamFactory mStreamFactory;
     private AudioPlayerFactory mAudioPlayerFactory;
+    private VideoPlayerFactory mVideoPlayerFactory;
 
     private int index = 0;
 
@@ -93,35 +79,17 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView implements MediaPla
 
     @Override
     protected void onCreateAudio() {
-
         mAudioPlayerFactory = new AudioPlayerFactory(getContext());
         this.addView(mAudioPlayerFactory.getView());
     }
 
     @Override
     protected void onCreateVideo() {
+        mVideoPlayerFactory = new VideoPlayerFactory(getContext(), getRenderMode());
+        mVideoPlayerFactory.getMediaPlayer();
+        this.addView(mVideoPlayerFactory.getView());
 
-        mMediaPlayer = new MediaPlayer();
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mMediaPlayer.setOnPreparedListener(this);
-        mMediaPlayer.setOnVideoSizeChangedListener(this);
-        mMediaPlayer.setOnCompletionListener(this);
-        mMediaPlayer.setOnErrorListener(this);
-        mMediaPlayer.setOnInfoListener(this);
-        mMediaPlayer.setOnBufferingUpdateListener(this);
-
-        if (RenderMode.TEXTURE_VIEW.ordinal() == getRenderMode()) {
-            mTextureView = new TextureView(getContext());
-            mTextureView.setSurfaceTextureListener(this);
-            this.addView(mTextureView, mParams);
-            this.setLayerType(LAYER_TYPE_HARDWARE, null);
-        } else {
-            mSurfaceView = new SurfaceView(getContext());
-            mSurfaceHolder = mSurfaceView.getHolder();
-            mSurfaceHolder.addCallback(this);
-            this.addView(mSurfaceView, mParams);
-        }
-
+        //this.setLayerType(LAYER_TYPE_HARDWARE, null);
     }
 
     @Override
@@ -139,6 +107,9 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView implements MediaPla
             onCreateStream();
         } else if (Template.JUST_VIDEO.ordinal() == getTemplate()) {
             onCreateVideo();
+        } else if (Template.JUST_LIVE.ordinal() == getTemplate()) {
+
+
         } else if (Template.BOTH_AUDIO_STREAM.ordinal() == getTemplate()) {
             onCreateStream();
             onCreateAudio();
@@ -159,15 +130,43 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView implements MediaPla
 
     }
 
+    @Override
+    public void lowMemory() {
+        if (mStreamFactory != null) {
+            mStreamFactory.lowMemory();
+        }
+        if (mAudioPlayerFactory != null) {
+            mAudioPlayerFactory.lowMemory();
+        }
+        if (mVideoPlayerFactory != null) {
+            mVideoPlayerFactory.lowMemory();
+        }
+    }
 
     @Override
     public void trimMemory(int level) {
-
+        if (mStreamFactory != null) {
+            mStreamFactory.trimMemory(level);
+        }
+        if (mAudioPlayerFactory != null) {
+            mAudioPlayerFactory.trimMemory(level);
+        }
+        if (mVideoPlayerFactory != null) {
+            mVideoPlayerFactory.trimMemory(level);
+        }
     }
 
     @Override
     public void recycle() {
-
+        if (mStreamFactory != null) {
+            mStreamFactory.recycle();
+        }
+        if (mAudioPlayerFactory != null) {
+            mAudioPlayerFactory.recycle();
+        }
+        if (mVideoPlayerFactory != null) {
+            mVideoPlayerFactory.recycle();
+        }
     }
 
     /***********************************************************************************************/
@@ -191,7 +190,7 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView implements MediaPla
 
     @Override
     public void startPlay() {
-        mExecutorService.execute(new PlayerRunnable());
+        prepare(index);
     }
 
     @Override
@@ -200,24 +199,15 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView implements MediaPla
             mStreamFactory.stopPlay();
         if (mAudioPlayerFactory != null)
             mAudioPlayerFactory.stopPlay();
+        if (mVideoPlayerFactory != null)
+            mVideoPlayerFactory.stopPlay();
 
     }
 
-    @Override
-    public void lowMemory() {
-
-    }
 
     /***********************************************************************************************/
     /***********************************************************************************************/
     /***********************************************************************************************/
-    class PlayerRunnable implements Runnable {
-
-        @Override
-        public void run() {
-            prepare(index);
-        }
-    }
 
     private void prepare(int index) {
 
@@ -235,113 +225,9 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView implements MediaPla
         if (mAudioPlayerFactory != null) {
             mAudioPlayerFactory.setMediaTask(mMediaTasks.get(index).getAudioUrls(), false);
         }
-
-        //视频播放
-        try {
-            if (mMediaPlayer != null) {
-                mMediaPlayer.setDataSource(mMediaTasks.get(index).getVideoUri());
-                mMediaPlayer.prepare();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e("sos", "prepareMedia>>" + e.toString());
+        //
+        if (mVideoPlayerFactory != null) {
+            mVideoPlayerFactory.setMediaTask(mMediaTasks.get(index).getVideoUri());
         }
     }
-
-    /***********************************************************************************************/
-    /***********************************************************************************************/
-    /***********************************************************************************************/
-    @Override
-    public void onPrepared(MediaPlayer mediaPlayer) {
-        Log.d(TAG, "onPrepared>>" + mediaPlayer.isPlaying());
-        mMediaPlayer.start();
-    }
-
-    @Override
-    public void onVideoSizeChanged(MediaPlayer mediaPlayer, int i, int i1) {
-        Log.d(TAG, "onVideoSizeChanged>>" + i + "----" + i1);
-    }
-
-    @Override
-    public void onBufferingUpdate(MediaPlayer mediaPlayer, int i) {
-        Log.d(TAG, "onBufferingUpdate>>" + i);
-    }
-
-    @Override
-    public void onCompletion(MediaPlayer mediaPlayer) {
-        Log.e("sos", "onCompletion>>");
-    }
-
-    @Override
-    public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-        Log.d(TAG, "onError>>" + i);
-        return false;
-    }
-
-    @Override
-    public boolean onInfo(MediaPlayer mediaPlayer, int i, int i1) {
-        Log.d(TAG, "onInfo>>" + i + "---" + i1);
-        return false;
-    }
-    /***********************************************************************************************/
-    /***********************************************************************************************/
-    /***********************************************************************************************/
-    /**
-     * SurfaceView
-     */
-
-    @Override
-    public void surfaceCreated(SurfaceHolder surfaceHolder) {
-        Log.d(TAG, "surfaceCreated");
-        mMediaPlayer.setDisplay(surfaceHolder);
-    }
-
-    @Override
-    public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-        Log.d(TAG, "surfaceChanged");
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-        Log.d(TAG, "surfaceDestroyed");
-    }
-
-    /***********************************************************************************************/
-    /***********************************************************************************************/
-    /***********************************************************************************************/
-
-    /**
-     * TextureView
-     */
-    @Override
-    public void onSurfaceTextureAvailable(android.graphics.SurfaceTexture surfaceTexture, int i, int i1) {
-        Log.d(TAG, "SurfaceTexture准备就绪>>>" + i);
-        // SurfaceTexture准备就绪
-        mMediaPlayer.setSurface(new Surface(surfaceTexture));
-        //mMediaPlayer.prepareAsync();
-    }
-
-    @Override
-    public void onSurfaceTextureSizeChanged(android.graphics.SurfaceTexture surfaceTexture, int i, int i1) {
-        // SurfaceTexture缓冲大小变化
-        Log.d(TAG, "SurfaceTexture缓冲大小变化>>>" + i);
-    }
-
-    @Override
-    public boolean onSurfaceTextureDestroyed(android.graphics.SurfaceTexture surfaceTexture) {
-        // SurfaceTexture即将被销毁
-        mMediaPlayer.stop();
-        mMediaPlayer.release();
-        Log.d(TAG, "SurfaceTexture即将被销毁>>>");
-        return false;
-    }
-
-    @Override
-    public void onSurfaceTextureUpdated(android.graphics.SurfaceTexture surfaceTexture) {
-        // SurfaceTexture通过updateImage更新
-        Log.d(TAG, "SurfaceTexture通过updateImage更新>>>");
-    }
-    /***********************************************************************************************/
-    /***********************************************************************************************/
-    /***********************************************************************************************/
 }

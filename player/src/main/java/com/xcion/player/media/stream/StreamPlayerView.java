@@ -8,13 +8,16 @@ import android.os.Message;
 import android.util.AttributeSet;
 
 import com.bumptech.glide.Glide;
-import com.xcion.player.media.Lifecycle;
 import com.xcion.player.R;
+import com.xcion.player.media.Lifecycle;
+import com.xcion.player.media.video.VideoPlayerFactory;
 import com.xcion.player.pojo.StreamTask;
 import com.xcion.player.widget.SmoothLayoutManager;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,13 +31,14 @@ import androidx.recyclerview.widget.RecyclerView;
  * describe: This is...
  */
 
-public class StreamPlayerView extends RecyclerView implements Lifecycle<StreamTask>, Handler.Callback {
+public class StreamPlayerView extends RecyclerView implements Lifecycle<ArrayList<StreamTask>>, Handler.Callback {
 
     public enum Scrolling {
         SCROLLING_HORIZONTAL,
         SCROLLING_VERTICAL,
     }
 
+    private ExecutorService mExecutorService = Executors.newSingleThreadExecutor();
     private Handler mHandler = new Handler(this);
     private Handler mMainHandler = new Handler(Looper.getMainLooper());
     private PagerSnapHelper mPagerSnapHelper = new PagerSnapHelper();
@@ -198,10 +202,20 @@ public class StreamPlayerView extends RecyclerView implements Lifecycle<StreamTa
     public void recycle() {
         stopPostDelayed();
         Glide.get(getContext()).clearMemory();
-        Glide.get(getContext()).clearDiskCache();
+        mExecutorService.execute(new CacheRunnable());
         mHandler = null;
         mStreamAdapter = null;
         streamTask.clear();
         streamTask = null;
     }
+
+
+    class CacheRunnable implements Runnable {
+
+        @Override
+        public void run() {
+            Glide.get(getContext()).clearDiskCache();
+        }
+    }
+
 }

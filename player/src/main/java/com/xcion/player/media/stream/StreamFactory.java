@@ -18,10 +18,9 @@ import java.util.List;
  * describe: This is...
  */
 
-public class StreamFactory extends AbstractFactory implements Lifecycle<StreamTask> {
+public class StreamFactory extends AbstractFactory implements Lifecycle<ArrayList<StreamTask>> {
 
     private Context context;
-
     private StreamPlayerView mStreamPlayerView;
 
     public StreamFactory(Context context) {
@@ -57,7 +56,7 @@ public class StreamFactory extends AbstractFactory implements Lifecycle<StreamTa
 
     @Override
     public void setMediaTask(ArrayList<StreamTask> tasks) {
-            setMediaTask(tasks, false);
+        setMediaTask(tasks, false);
     }
 
     @Override
@@ -70,26 +69,36 @@ public class StreamFactory extends AbstractFactory implements Lifecycle<StreamTa
 
     @Override
     public void startPlay() {
-
+        if (mStreamPlayerView != null) {
+            mStreamPlayerView.startPlay();
+        }
     }
 
     @Override
     public void stopPlay() {
-
+        if (mStreamPlayerView != null) {
+            mStreamPlayerView.stopPlay();
+        }
     }
 
     @Override
     public void lowMemory() {
-
+        if (mStreamPlayerView != null) {
+            mStreamPlayerView.lowMemory();
+        }
     }
 
     @Override
     public void trimMemory(int level) {
-
+        if (mStreamPlayerView != null) {
+            mStreamPlayerView.trimMemory(level);
+        }
     }
 
     @Override
     public void recycle() {
-
+        if (mStreamPlayerView != null) {
+            mStreamPlayerView.recycle();
+        }
     }
 }

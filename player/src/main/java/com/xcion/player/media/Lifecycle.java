@@ -1,11 +1,5 @@
 package com.xcion.player.media;
 
-import com.xcion.player.pojo.MediaTask;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Author: Kern
  * E-mail: sky580@126.com
@@ -14,9 +8,9 @@ import java.util.List;
  */
 public interface Lifecycle<T> {
 
-    void setMediaTask(ArrayList<T> tasks);
+    void setMediaTask(T tasks);
 
-    void setMediaTask(ArrayList<T> tasks, boolean isAppend);
+    void setMediaTask(T tasks, boolean isAppend);
 
     void startPlay();
 

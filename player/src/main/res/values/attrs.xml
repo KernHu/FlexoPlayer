@@ -6,9 +6,9 @@
         <attr name="fpv_template" format="enum">
             <enum name="just_stream" value="0" />
             <enum name="just_video" value="1" />
-            <enum name="both_audio_stream" value="2" />
-            <enum name="both_audio_video" value="3" />
-            <enum name="all" value="4" />
+            <enum name="just_live" value="2" />
+            <enum name="both_audio_stream" value="3" />
+            <enum name="both_audio_video" value="4" />
         </attr>
         <attr name="fpv_render_mode" format="enum">
             <enum name="surface_view" value="0" />

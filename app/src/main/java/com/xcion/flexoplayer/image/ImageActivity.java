@@ -22,7 +22,6 @@ import androidx.appcompat.app.AppCompatActivity;
 public class ImageActivity extends AppCompatActivity {
 
     FlexoPlayerView mFlexoPlayerView;
-    private List<MediaTask> mMediaTasks = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

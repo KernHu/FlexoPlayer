@@ -24,7 +24,7 @@ import androidx.annotation.Nullable;
  */
 
 @SuppressLint("AppCompatCustomView")
-public class AudioView extends ImageView implements Lifecycle<String> {
+public class AudioView extends ImageView implements Lifecycle<ArrayList<String>> {
 
     private RotateAnimation mRotateAnimation;
     private AudioPlayer mAudioPlayer;

@@ -10,6 +10,8 @@ import android.widget.FrameLayout;
 import com.xcion.player.media.Lifecycle;
 import com.xcion.player.pojo.MediaTask;
 
+import java.util.ArrayList;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -20,30 +22,7 @@ import androidx.annotation.Nullable;
  * describe: This is...
  */
 
-abstract class AbstractFlexoPlayerView extends FrameLayout implements Lifecycle<MediaTask> {
-
-    public enum Template {
-        JUST_STREAM,
-        JUST_VIDEO,
-        BOTH_AUDIO_STREAM,
-        BOTH_AUDIO_VIDEO,
-        ALL
-    }
-
-    public enum RenderMode {
-        SURFACE_VIEW,
-        TEXTURE_VIEW
-    }
-
-    public enum CodecMode {
-        SOFTWARE,
-        HARDWARE
-    }
-
-    public enum DisplayMode {
-        FIT_PARENT,
-        ORIGIN
-    }
+abstract class AbstractFlexoPlayerView extends FrameLayout implements Lifecycle<ArrayList<MediaTask>> {
 
     private int template;
     private int displayOrientation;
@@ -80,10 +59,10 @@ abstract class AbstractFlexoPlayerView extends FrameLayout implements Lifecycle<
 
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.FlexoPlayerView);
         try {
-            template = a.getInt(R.styleable.FlexoPlayerView_fpv_template, FlexoPlayerView.Template.ALL.ordinal());
-            renderMode = a.getInt(R.styleable.FlexoPlayerView_fpv_render_mode, FlexoPlayerView.RenderMode.SURFACE_VIEW.ordinal());
-            codecMode = a.getInt(R.styleable.FlexoPlayerView_fpv_codec_mode, FlexoPlayerView.CodecMode.HARDWARE.ordinal());
-            displayMode = a.getInt(R.styleable.FlexoPlayerView_fpv_display_mode, FlexoPlayerView.DisplayMode.FIT_PARENT.ordinal());
+            template = a.getInt(R.styleable.FlexoPlayerView_fpv_template, Template.JUST_STREAM.ordinal());
+            renderMode = a.getInt(R.styleable.FlexoPlayerView_fpv_render_mode, RenderMode.SURFACE_VIEW.ordinal());
+            codecMode = a.getInt(R.styleable.FlexoPlayerView_fpv_codec_mode, CodecMode.HARDWARE.ordinal());
+            displayMode = a.getInt(R.styleable.FlexoPlayerView_fpv_display_mode, DisplayMode.FIT_PARENT.ordinal());
             coverRes = a.getResourceId(R.styleable.FlexoPlayerView_fpv_cover_res, R.drawable.default_video_cover);
             loadingViewRes = a.getResourceId(R.styleable.FlexoPlayerView_fpv_loading_view_res, R.layout.fpv_loading_view);
             controllerViewRes = a.getResourceId(R.styleable.FlexoPlayerView_fpv_controller_view_res, R.layout.fpv_controller_view);

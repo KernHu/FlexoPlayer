@@ -9,7 +9,6 @@ import com.xcion.player.media.AbstractFactory;
 import com.xcion.player.media.Lifecycle;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * author: Kern Hu
@@ -18,7 +17,7 @@ import java.util.List;
  * describe: This is...
  */
 
-public class AudioPlayerFactory extends AbstractFactory implements Lifecycle<String> {
+public class AudioPlayerFactory extends AbstractFactory implements Lifecycle<ArrayList<String>> {
 
     private Context context;
     private AudioView mAudioView;
