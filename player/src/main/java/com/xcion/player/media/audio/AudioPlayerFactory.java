@@ -5,6 +5,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.xcion.player.enum1.DisplayMode;
 import com.xcion.player.media.AbstractFactory;
 import com.xcion.player.media.Lifecycle;
 
@@ -79,5 +80,30 @@ public class AudioPlayerFactory extends AbstractFactory implements Lifecycle<Arr
     @Override
     public void recycle() {
         mAudioView.recycle();
+    }
+
+    @Override
+    public void setAudioVolume(int level) {
+
+    }
+
+    @Override
+    public void setVideoVolume(int level) {
+
+    }
+
+    @Override
+    public void setVideoArea(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY) {
+
+    }
+
+    @Override
+    public void setDisplayAspectRatio(DisplayMode mode) {
+
+    }
+
+    @Override
+    public void setDisplayOrientation(int value) {
+
     }
 }

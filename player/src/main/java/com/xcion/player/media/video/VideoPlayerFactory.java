@@ -11,6 +11,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.xcion.player.enum1.DisplayMode;
 import com.xcion.player.enum1.RenderMode;
 import com.xcion.player.media.AbstractFactory;
 import com.xcion.player.media.Lifecycle;
@@ -147,6 +148,31 @@ public class VideoPlayerFactory extends AbstractFactory implements Lifecycle<Str
         if (mMediaPlayer != null) {
             mMediaPlayer.release();
         }
+    }
+
+    @Override
+    public void setAudioVolume(int level) {
+
+    }
+
+    @Override
+    public void setVideoVolume(int level) {
+
+    }
+
+    @Override
+    public void setVideoArea(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY) {
+
+    }
+
+    @Override
+    public void setDisplayAspectRatio(DisplayMode mode) {
+
+    }
+
+    @Override
+    public void setDisplayOrientation(int value) {
+
     }
 
     /***********************************************************************************************/

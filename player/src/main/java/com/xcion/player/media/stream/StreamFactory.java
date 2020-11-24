@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.xcion.player.enum1.DisplayMode;
 import com.xcion.player.media.AbstractFactory;
 import com.xcion.player.media.Lifecycle;
 import com.xcion.player.pojo.StreamTask;
@@ -100,5 +101,30 @@ public class StreamFactory extends AbstractFactory implements Lifecycle<ArrayLis
         if (mStreamPlayerView != null) {
             mStreamPlayerView.recycle();
         }
+    }
+
+    @Override
+    public void setAudioVolume(int level) {
+
+    }
+
+    @Override
+    public void setVideoVolume(int level) {
+
+    }
+
+    @Override
+    public void setVideoArea(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY) {
+
+    }
+
+    @Override
+    public void setDisplayAspectRatio(DisplayMode mode) {
+
+    }
+
+    @Override
+    public void setDisplayOrientation(int value) {
+
     }
 }

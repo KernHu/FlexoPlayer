@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 
 import com.bumptech.glide.Glide;
 import com.xcion.player.R;
+import com.xcion.player.enum1.DisplayMode;
 import com.xcion.player.media.Lifecycle;
 import com.xcion.player.media.video.VideoPlayerFactory;
 import com.xcion.player.pojo.StreamTask;
@@ -214,6 +215,31 @@ public class StreamPlayerView extends RecyclerView implements Lifecycle<ArrayLis
         mStreamAdapter = null;
         streamTask.clear();
         streamTask = null;
+    }
+
+    @Override
+    public void setAudioVolume(int level) {
+
+    }
+
+    @Override
+    public void setVideoVolume(int level) {
+
+    }
+
+    @Override
+    public void setVideoArea(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY) {
+
+    }
+
+    @Override
+    public void setDisplayAspectRatio(DisplayMode mode) {
+
+    }
+
+    @Override
+    public void setDisplayOrientation(int value) {
+
     }
 
 

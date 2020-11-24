@@ -8,6 +8,7 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 
+import com.xcion.player.enum1.DisplayMode;
 import com.xcion.player.media.Lifecycle;
 import com.xcion.player.R;
 
@@ -100,5 +101,30 @@ public class AudioView extends ImageView implements Lifecycle<ArrayList<String>>
         mRotateAnimation.cancel();
         //
         mAudioPlayer.recycle();
+    }
+
+    @Override
+    public void setAudioVolume(int level) {
+
+    }
+
+    @Override
+    public void setVideoVolume(int level) {
+
+    }
+
+    @Override
+    public void setVideoArea(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY) {
+
+    }
+
+    @Override
+    public void setDisplayAspectRatio(DisplayMode mode) {
+
+    }
+
+    @Override
+    public void setDisplayOrientation(int value) {
+
     }
 }
