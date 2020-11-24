@@ -1,6 +1,7 @@
 package com.xcion.player.taskbar;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +54,8 @@ public class TaskBarAdapter extends RecyclerView.Adapter<TaskbarViewHolder> {
     public void onBindViewHolder(@NonNull TaskbarViewHolder holder, int position) {
 
         MediaTask task = mMediaTask.get(position);
+        holder.itemView.setBackgroundColor(task.isSelected() ? Color.parseColor("#F6EA7B") : Color.parseColor("#FFFFFFFF"));
+
         holder.mTitleText.setText(task.title);
         String videoCount = String.valueOf(1);
         String audioCount = String.valueOf(task.audioUrls == null ? 0 : task.audioUrls.size());

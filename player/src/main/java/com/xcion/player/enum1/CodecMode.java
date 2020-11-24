@@ -1,4 +1,4 @@
-package com.xcion.player;
+package com.xcion.player.enum1;
 
 /**
  * Author: Kern
@@ -7,7 +7,7 @@ package com.xcion.player;
  * Intro:
  */
 
-public enum RenderMode {
-    SURFACE_VIEW,
-    TEXTURE_VIEW
+public enum CodecMode {
+    SOFTWARE,
+    HARDWARE
 }

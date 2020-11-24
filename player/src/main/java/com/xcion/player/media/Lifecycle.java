@@ -1,5 +1,7 @@
 package com.xcion.player.media;
 
+import com.xcion.player.enum1.DisplayMode;
+
 /**
  * Author: Kern
  * E-mail: sky580@126.com
@@ -22,4 +24,13 @@ public interface Lifecycle<T> {
 
     void recycle();
 
+    void setAudioVolume(int level);
+
+    void setVideoVolume(int level);
+
+    void setVideoArea(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY);
+
+    void setDisplayAspectRatio(DisplayMode mode);
+
+    void setDisplayOrientation(int value);
 }

@@ -17,6 +17,8 @@ public class MediaTask {
     public ArrayList<StreamTask> streamTasks;
     public ArrayList<String> messageList;
 
+    public boolean selected;
+
     public MediaTask() {
     }
 
@@ -58,6 +60,14 @@ public class MediaTask {
 
     public void setMessageList(ArrayList<String> messageList) {
         this.messageList = messageList;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 
     @Override

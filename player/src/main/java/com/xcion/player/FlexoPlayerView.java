@@ -2,10 +2,13 @@ package com.xcion.player;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.widget.FrameLayout;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import com.xcion.player.controller.ControllerFactory;
+import com.xcion.player.enum1.DisplayMode;
+import com.xcion.player.enum1.Template;
 import com.xcion.player.media.audio.AudioPlayerFactory;
 import com.xcion.player.media.stream.StreamFactory;
 import com.xcion.player.media.video.VideoPlayerFactory;
@@ -28,12 +31,12 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView {
     private static final String TAG = "FlexoPlayerView";
 
     private ArrayList<MediaTask> mMediaTasks = new ArrayList<>();
-
     private ControllerFactory mControllerFactory;
     private TaskBarFactory mTaskBarFactory;
     private StreamFactory mStreamFactory;
     private AudioPlayerFactory mAudioPlayerFactory;
     private VideoPlayerFactory mVideoPlayerFactory;
+    private View mControllerView, mTaskBarView;
 
     private int index = 0;
 
@@ -56,13 +59,15 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView {
     @Override
     protected void onCreateController() {
         mControllerFactory = new ControllerFactory(getContext(), getControllerViewRes());
-        this.addView(mControllerFactory.getView());
+        mControllerView = mControllerFactory.getView();
+        this.addView(mControllerView);
     }
 
     @Override
     protected void onCreateTaskBar() {
         mTaskBarFactory = new TaskBarFactory(getContext(), getTaskBarViewRes());
-        this.addView(mTaskBarFactory.getView());
+        mTaskBarView = mTaskBarFactory.getView();
+        this.addView(mTaskBarView);
     }
 
 
@@ -88,13 +93,111 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView {
         mVideoPlayerFactory = new VideoPlayerFactory(getContext(), getRenderMode());
         mVideoPlayerFactory.getMediaPlayer();
         this.addView(mVideoPlayerFactory.getView());
-
-        //this.setLayerType(LAYER_TYPE_HARDWARE, null);
+        this.setLayerType(LAYER_TYPE_HARDWARE, null);
     }
 
     @Override
     protected void onCreateLive() {
 
+    }
+
+    @Override
+    protected void onTaskBarInAnim() {
+        Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.anim_taskbar_in);
+        mTaskBarView.setAnimation(animation);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mTaskBarView.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+    }
+
+    @Override
+    protected void onTaskBarOutAnim() {
+        Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.anim_taskbar_out);
+        mTaskBarView.setAnimation(animation);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mTaskBarView.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+    }
+
+    @Override
+    protected void onControllerInAnim() {
+        Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.anim_controller_in);
+        mControllerView.setAnimation(animation);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mControllerView.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+    }
+
+    @Override
+    protected void onControllerOutAnim() {
+        Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.anim_controller_out);
+        mControllerView.setAnimation(animation);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mControllerView.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+    }
+
+    @Override
+    protected void onShowUi(boolean isShowUI) {
+        if (isShowUI) {
+            onTaskBarInAnim();
+            onControllerInAnim();
+        } else {
+            onTaskBarOutAnim();
+            onControllerOutAnim();
+        }
     }
     /***********************************************************************************************/
     /***********************************************************************************************/
@@ -123,11 +226,12 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView {
         }
         onCreateTaskBar();
         onCreateController();
+        onBindData();
     }
 
     @Override
     public void onBindData() {
-
+        onShowUi(false);
     }
 
     @Override
@@ -169,6 +273,31 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView {
         }
     }
 
+    @Override
+    public void setAudioVolume(int level) {
+
+    }
+
+    @Override
+    public void setVideoVolume(int level) {
+
+    }
+
+    @Override
+    public void setVideoArea(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY) {
+
+    }
+
+    @Override
+    public void setDisplayAspectRatio(DisplayMode mode) {
+
+    }
+
+    @Override
+    public void setDisplayOrientation(int value) {
+
+    }
+
     /***********************************************************************************************/
     /***********************************************************************************************/
     /***********************************************************************************************/
@@ -204,13 +333,11 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView {
 
     }
 
-
     /***********************************************************************************************/
     /***********************************************************************************************/
     /***********************************************************************************************/
 
     private void prepare(int index) {
-
         //任务列表
         if (mTaskBarFactory != null) {
             mTaskBarFactory.setUpdate(mMediaTasks);
@@ -230,4 +357,6 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView {
             mVideoPlayerFactory.setMediaTask(mMediaTasks.get(index).getVideoUri());
         }
     }
+
+
 }

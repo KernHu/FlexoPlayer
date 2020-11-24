@@ -163,6 +163,13 @@ public class StreamPlayerView extends RecyclerView implements Lifecycle<ArrayLis
         });
     }
 
+    /**
+     * @return
+     */
+    private long getContentLength() {
+        return delayed * streamTask.size();
+    }
+
     /************************************************************************************/
     @Override
     public void setMediaTask(ArrayList<StreamTask> tasks) {

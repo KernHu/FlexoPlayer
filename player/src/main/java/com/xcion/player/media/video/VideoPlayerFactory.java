@@ -11,7 +11,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.xcion.player.RenderMode;
+import com.xcion.player.enum1.RenderMode;
 import com.xcion.player.media.AbstractFactory;
 import com.xcion.player.media.Lifecycle;
 
@@ -50,7 +50,7 @@ public class VideoPlayerFactory extends AbstractFactory implements Lifecycle<Str
 
     @Override
     public View getView() {
-        Log.e("sos", "getView>>>" + renderMode);
+
         if (RenderMode.TEXTURE_VIEW.ordinal() == renderMode) {
             mTextureView = new TextureView(context);
             mTextureView.setLayoutParams(mParams);
