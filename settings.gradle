@@ -1,3 +1,4 @@
+include ':downloader'
 include ':player'
 include ':app'
 rootProject.name = "FlexoPlayer"
