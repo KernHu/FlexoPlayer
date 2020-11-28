@@ -1,27 +1,21 @@
 package com.xcion.player;
 
 import android.content.Context;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.Surface;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.TextureView;
-import android.widget.FrameLayout;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
-import com.xcion.player.audio.AudioPlayerFactory;
 import com.xcion.player.controller.ControllerFactory;
+import com.xcion.player.enum1.DisplayMode;
+import com.xcion.player.enum1.Template;
+import com.xcion.player.media.audio.AudioPlayerFactory;
+import com.xcion.player.media.stream.StreamFactory;
+import com.xcion.player.media.video.VideoPlayerFactory;
 import com.xcion.player.pojo.MediaTask;
-import com.xcion.player.stream.StreamFactory;
 import com.xcion.player.taskbar.TaskBarFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,23 +26,17 @@ import androidx.annotation.Nullable;
  * data_time: 11/16/20 8:03 PM
  * describe: This is...
  */
-public class FlexoPlayerView extends AbstractFlexoPlayerView implements MediaPlayer.OnPreparedListener, MediaPlayer.OnVideoSizeChangedListener,
-        MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener, MediaPlayer.OnInfoListener, MediaPlayer.OnBufferingUpdateListener,
-        TextureView.SurfaceTextureListener, SurfaceHolder.Callback {
+public class FlexoPlayerView extends AbstractFlexoPlayerView {
 
     private static final String TAG = "FlexoPlayerView";
-    private FrameLayout.LayoutParams mParams = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-    private ExecutorService mExecutorService = Executors.newSingleThreadExecutor();
-    private ArrayList<MediaTask> mMediaTasks = new ArrayList<>();
-    private MediaPlayer mMediaPlayer;
-    private SurfaceView mSurfaceView;
-    private SurfaceHolder mSurfaceHolder;
-    private TextureView mTextureView;
 
+    private ArrayList<MediaTask> mMediaTasks = new ArrayList<>();
     private ControllerFactory mControllerFactory;
     private TaskBarFactory mTaskBarFactory;
     private StreamFactory mStreamFactory;
     private AudioPlayerFactory mAudioPlayerFactory;
+    private VideoPlayerFactory mVideoPlayerFactory;
+    private View mControllerView, mTaskBarView;
 
     private int index = 0;
 
@@ -65,19 +53,21 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView implements MediaPla
         initView();
     }
 
-    /*****************************************************************************************/
-    /*****************************************************************************************/
-    /*****************************************************************************************/
+    /***********************************************************************************************/
+    /***********************************************************************************************/
+    /***********************************************************************************************/
     @Override
     protected void onCreateController() {
         mControllerFactory = new ControllerFactory(getContext(), getControllerViewRes());
-        this.addView(mControllerFactory.getView());
+        mControllerView = mControllerFactory.getView();
+        this.addView(mControllerView);
     }
 
     @Override
     protected void onCreateTaskBar() {
         mTaskBarFactory = new TaskBarFactory(getContext(), getTaskBarViewRes());
-        this.addView(mTaskBarFactory.getView());
+        mTaskBarView = mTaskBarFactory.getView();
+        this.addView(mTaskBarView);
     }
 
 
@@ -94,44 +84,124 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView implements MediaPla
 
     @Override
     protected void onCreateAudio() {
-
         mAudioPlayerFactory = new AudioPlayerFactory(getContext());
         this.addView(mAudioPlayerFactory.getView());
     }
 
     @Override
     protected void onCreateVideo() {
-
-        mMediaPlayer = new MediaPlayer();
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mMediaPlayer.setOnPreparedListener(this);
-        mMediaPlayer.setOnVideoSizeChangedListener(this);
-        mMediaPlayer.setOnCompletionListener(this);
-        mMediaPlayer.setOnErrorListener(this);
-        mMediaPlayer.setOnInfoListener(this);
-        mMediaPlayer.setOnBufferingUpdateListener(this);
-
-        if (RenderMode.TEXTURE_VIEW.ordinal() == getRenderMode()) {
-            mTextureView = new TextureView(getContext());
-            mTextureView.setSurfaceTextureListener(this);
-            this.addView(mTextureView, mParams);
-            this.setLayerType(LAYER_TYPE_HARDWARE, null);
-        } else {
-            mSurfaceView = new SurfaceView(getContext());
-            mSurfaceHolder = mSurfaceView.getHolder();
-            mSurfaceHolder.addCallback(this);
-            this.addView(mSurfaceView, mParams);
-        }
-
+        mVideoPlayerFactory = new VideoPlayerFactory(getContext(), getRenderMode());
+        mVideoPlayerFactory.getMediaPlayer();
+        this.addView(mVideoPlayerFactory.getView());
+        this.setLayerType(LAYER_TYPE_HARDWARE, null);
     }
 
     @Override
     protected void onCreateLive() {
 
     }
-    /*****************************************************************************************/
-    /*****************************************************************************************/
-    /*****************************************************************************************/
+
+    @Override
+    protected void onTaskBarInAnim() {
+        Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.anim_taskbar_in);
+        mTaskBarView.setAnimation(animation);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mTaskBarView.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+    }
+
+    @Override
+    protected void onTaskBarOutAnim() {
+        Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.anim_taskbar_out);
+        mTaskBarView.setAnimation(animation);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mTaskBarView.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+    }
+
+    @Override
+    protected void onControllerInAnim() {
+        Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.anim_controller_in);
+        mControllerView.setAnimation(animation);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mControllerView.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+    }
+
+    @Override
+    protected void onControllerOutAnim() {
+        Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.anim_controller_out);
+        mControllerView.setAnimation(animation);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mControllerView.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+    }
+
+    @Override
+    protected void onShowUi(boolean isShowUI) {
+        if (isShowUI) {
+            onTaskBarInAnim();
+            onControllerInAnim();
+        } else {
+            onTaskBarOutAnim();
+            onControllerOutAnim();
+        }
+    }
+    /***********************************************************************************************/
+    /***********************************************************************************************/
+    /***********************************************************************************************/
 
     @Override
     protected void initView() {
@@ -140,6 +210,9 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView implements MediaPla
             onCreateStream();
         } else if (Template.JUST_VIDEO.ordinal() == getTemplate()) {
             onCreateVideo();
+        } else if (Template.JUST_LIVE.ordinal() == getTemplate()) {
+
+
         } else if (Template.BOTH_AUDIO_STREAM.ordinal() == getTemplate()) {
             onCreateStream();
             onCreateAudio();
@@ -153,35 +226,89 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView implements MediaPla
         }
         onCreateTaskBar();
         onCreateController();
+        onBindData();
     }
 
     @Override
     public void onBindData() {
-
+        onShowUi(false);
     }
 
+    @Override
+    public void lowMemory() {
+        if (mStreamFactory != null) {
+            mStreamFactory.lowMemory();
+        }
+        if (mAudioPlayerFactory != null) {
+            mAudioPlayerFactory.lowMemory();
+        }
+        if (mVideoPlayerFactory != null) {
+            mVideoPlayerFactory.lowMemory();
+        }
+    }
 
     @Override
     public void trimMemory(int level) {
-
+        if (mStreamFactory != null) {
+            mStreamFactory.trimMemory(level);
+        }
+        if (mAudioPlayerFactory != null) {
+            mAudioPlayerFactory.trimMemory(level);
+        }
+        if (mVideoPlayerFactory != null) {
+            mVideoPlayerFactory.trimMemory(level);
+        }
     }
 
     @Override
     public void recycle() {
+        if (mStreamFactory != null) {
+            mStreamFactory.recycle();
+        }
+        if (mAudioPlayerFactory != null) {
+            mAudioPlayerFactory.recycle();
+        }
+        if (mVideoPlayerFactory != null) {
+            mVideoPlayerFactory.recycle();
+        }
+    }
+
+    @Override
+    public void setAudioVolume(int level) {
 
     }
 
-    /*****************************************************************************************/
-    /*****************************************************************************************/
-    /*****************************************************************************************/
+    @Override
+    public void setVideoVolume(int level) {
+
+    }
 
     @Override
-    public void setMediaTask(List<MediaTask> tasks) {
+    public void setVideoArea(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY) {
+
+    }
+
+    @Override
+    public void setDisplayAspectRatio(DisplayMode mode) {
+
+    }
+
+    @Override
+    public void setDisplayOrientation(int value) {
+
+    }
+
+    /***********************************************************************************************/
+    /***********************************************************************************************/
+    /***********************************************************************************************/
+
+    @Override
+    public void setMediaTask(ArrayList<MediaTask> tasks) {
         setMediaTask(tasks, false);
     }
 
     @Override
-    public void setMediaTask(List<MediaTask> tasks, boolean isAppend) {
+    public void setMediaTask(ArrayList<MediaTask> tasks, boolean isAppend) {
         if (tasks != null && !tasks.isEmpty()) {
             if (!isAppend) {
                 mMediaTasks.clear();
@@ -192,32 +319,25 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView implements MediaPla
 
     @Override
     public void startPlay() {
-        mExecutorService.execute(new PlayerRunnable());
+        prepare(index);
     }
 
     @Override
     public void stopPlay() {
+        if (mStreamFactory != null)
+            mStreamFactory.stopPlay();
+        if (mAudioPlayerFactory != null)
+            mAudioPlayerFactory.stopPlay();
+        if (mVideoPlayerFactory != null)
+            mVideoPlayerFactory.stopPlay();
 
     }
 
-    @Override
-    public void lowMemory() {
-
-    }
-
-    /*****************************************************************************************/
-    /*****************************************************************************************/
-    /*****************************************************************************************/
-    class PlayerRunnable implements Runnable {
-
-        @Override
-        public void run() {
-            prepare(index);
-        }
-    }
+    /***********************************************************************************************/
+    /***********************************************************************************************/
+    /***********************************************************************************************/
 
     private void prepare(int index) {
-
         //任务列表
         if (mTaskBarFactory != null) {
             mTaskBarFactory.setUpdate(mMediaTasks);
@@ -225,119 +345,18 @@ public class FlexoPlayerView extends AbstractFlexoPlayerView implements MediaPla
 
         //信息流播放
         if (mStreamFactory != null) {
-            mStreamFactory.setStreamTask(mMediaTasks.get(index).getStreamTasks(), false);
+            mStreamFactory.setMediaTask(mMediaTasks.get(index).getStreamTasks(), false);
         }
 
+        //音频播放
+        if (mAudioPlayerFactory != null) {
+            mAudioPlayerFactory.setMediaTask(mMediaTasks.get(index).getAudioUrls(), false);
+        }
         //
-        try {
-            if (mMediaPlayer != null) {
-                mMediaPlayer.setDataSource(mMediaTasks.get(index).getVideoUri());
-                mMediaPlayer.prepare();
-            }
-            if (mAudioPlayerFactory != null) {
-                mAudioPlayerFactory.setMediaTask(mMediaTasks.get(index).getAudioUrls(), false);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e("sos", "prepareMedia>>" + e.toString());
+        if (mVideoPlayerFactory != null) {
+            mVideoPlayerFactory.setMediaTask(mMediaTasks.get(index).getVideoUri());
         }
     }
 
-    /*********************************************************************************************/
-    /*********************************************************************************************/
-    /*********************************************************************************************/
-    @Override
-    public void onPrepared(MediaPlayer mediaPlayer) {
-        Log.d(TAG, "onPrepared>>" + mediaPlayer.isPlaying());
-        mMediaPlayer.start();
-    }
 
-    @Override
-    public void onVideoSizeChanged(MediaPlayer mediaPlayer, int i, int i1) {
-        Log.d(TAG, "onVideoSizeChanged>>" + i + "----" + i1);
-    }
-
-    @Override
-    public void onBufferingUpdate(MediaPlayer mediaPlayer, int i) {
-        Log.d(TAG, "onBufferingUpdate>>" + i);
-    }
-
-    @Override
-    public void onCompletion(MediaPlayer mediaPlayer) {
-        Log.e("sos", "onCompletion>>");
-    }
-
-    @Override
-    public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-        Log.d(TAG, "onError>>" + i);
-        return false;
-    }
-
-    @Override
-    public boolean onInfo(MediaPlayer mediaPlayer, int i, int i1) {
-        Log.d(TAG, "onInfo>>" + i + "---" + i1);
-        return false;
-    }
-    /*********************************************************************************************/
-    /*********************************************************************************************/
-    /*********************************************************************************************/
-    /**
-     * SurfaceView
-     */
-
-    @Override
-    public void surfaceCreated(SurfaceHolder surfaceHolder) {
-        Log.d(TAG, "surfaceCreated");
-        mMediaPlayer.setDisplay(surfaceHolder);
-    }
-
-    @Override
-    public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-        Log.d(TAG, "surfaceChanged");
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-        Log.d(TAG, "surfaceDestroyed");
-    }
-
-    /*********************************************************************************************/
-    /*********************************************************************************************/
-    /*********************************************************************************************/
-
-    /**
-     * TextureView
-     */
-    @Override
-    public void onSurfaceTextureAvailable(android.graphics.SurfaceTexture surfaceTexture, int i, int i1) {
-        Log.d(TAG, "SurfaceTexture准备就绪>>>" + i);
-        // SurfaceTexture准备就绪
-        mMediaPlayer.setSurface(new Surface(surfaceTexture));
-        //mMediaPlayer.prepareAsync();
-    }
-
-    @Override
-    public void onSurfaceTextureSizeChanged(android.graphics.SurfaceTexture surfaceTexture, int i, int i1) {
-        // SurfaceTexture缓冲大小变化
-        Log.d(TAG, "SurfaceTexture缓冲大小变化>>>" + i);
-    }
-
-    @Override
-    public boolean onSurfaceTextureDestroyed(android.graphics.SurfaceTexture surfaceTexture) {
-        // SurfaceTexture即将被销毁
-        mMediaPlayer.stop();
-        mMediaPlayer.release();
-        Log.d(TAG, "SurfaceTexture即将被销毁>>>");
-        return false;
-    }
-
-    @Override
-    public void onSurfaceTextureUpdated(android.graphics.SurfaceTexture surfaceTexture) {
-        // SurfaceTexture通过updateImage更新
-        Log.d(TAG, "SurfaceTexture通过updateImage更新>>>");
-    }
-    /*********************************************************************************************/
-    /*********************************************************************************************/
-    /*********************************************************************************************/
 }

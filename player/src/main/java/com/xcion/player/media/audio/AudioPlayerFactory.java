@@ -1,27 +1,15 @@
-package com.xcion.player.audio;
+package com.xcion.player.media.audio;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 
-import com.xcion.player.AbstractFactory;
-import com.xcion.player.Lifecycle;
-import com.xcion.player.R;
-import com.xcion.player.pojo.MediaTask;
-import com.xcion.player.taskbar.TaskBarAdapter;
+import com.xcion.player.enum1.DisplayMode;
+import com.xcion.player.media.AbstractFactory;
+import com.xcion.player.media.Lifecycle;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * author: Kern Hu
@@ -30,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
  * describe: This is...
  */
 
-public class AudioPlayerFactory extends AbstractFactory implements Lifecycle<String> {
+public class AudioPlayerFactory extends AbstractFactory implements Lifecycle<ArrayList<String>> {
 
     private Context context;
     private AudioView mAudioView;
@@ -43,6 +31,12 @@ public class AudioPlayerFactory extends AbstractFactory implements Lifecycle<Str
     public View getView() {
 
         AudioView view = new AudioView(context);
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+        lp.gravity = Gravity.LEFT | Gravity.BOTTOM;
+        lp.leftMargin = 20;
+        lp.rightMargin = 20;
+        view.setLayoutParams(lp);
+
         initView(view);
         return view;
     }
@@ -53,12 +47,12 @@ public class AudioPlayerFactory extends AbstractFactory implements Lifecycle<Str
     }
 
     @Override
-    public void setMediaTask(List<String> tasks) {
+    public void setMediaTask(ArrayList<String> tasks) {
         setMediaTask(tasks, false);
     }
 
     @Override
-    public void setMediaTask(List<String> tasks, boolean isAppend) {
+    public void setMediaTask(ArrayList<String> tasks, boolean isAppend) {
         mAudioView.setMediaTask(tasks, isAppend);
         mAudioView.startPlay();
     }
@@ -86,5 +80,30 @@ public class AudioPlayerFactory extends AbstractFactory implements Lifecycle<Str
     @Override
     public void recycle() {
         mAudioView.recycle();
+    }
+
+    @Override
+    public void setAudioVolume(int level) {
+
+    }
+
+    @Override
+    public void setVideoVolume(int level) {
+
+    }
+
+    @Override
+    public void setVideoArea(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY) {
+
+    }
+
+    @Override
+    public void setDisplayAspectRatio(DisplayMode mode) {
+
+    }
+
+    @Override
+    public void setDisplayOrientation(int value) {
+
     }
 }

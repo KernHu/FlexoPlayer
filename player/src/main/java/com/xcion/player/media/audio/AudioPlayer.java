@@ -1,4 +1,4 @@
-package com.xcion.player.audio;
+package com.xcion.player.media.audio;
 
 import android.media.AudioFormat;
 import android.media.AudioManager;
@@ -181,11 +181,16 @@ public class AudioPlayer {
     }
 
     public void recycle() {
-        audioTrack.stop();
+
         isFinish = true;
-        mediaCodec.release();
-        audioTrack.release();
-        mediaExtractor.release();
+        if (audioTrack != null)
+            audioTrack.stop();
+        if (mediaCodec != null)
+            mediaCodec.release();
+        if (audioTrack != null)
+            audioTrack.release();
+        if (mediaExtractor != null)
+            mediaExtractor.release();
         mediaCodec = null;
         audioTrack = null;
         mediaExtractor = null;

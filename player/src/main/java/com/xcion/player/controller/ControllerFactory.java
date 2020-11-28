@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.xcion.player.AbstractFactory;
+import com.xcion.player.media.AbstractFactory;
 import com.xcion.player.R;
 
 /**
@@ -42,6 +42,9 @@ public class ControllerFactory extends AbstractFactory {
         View view = ViewGroup.inflate(context, controllerViewRes, null);
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.BOTTOM;
+        lp.leftMargin = 350;
+        lp.rightMargin = 350;
+        view.setPadding(10,20,10,20);
         view.setLayoutParams(lp);
         initView(view);
 

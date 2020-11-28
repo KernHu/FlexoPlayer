@@ -1,4 +1,4 @@
-package com.xcion.player.stream;
+package com.xcion.player.media.stream;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,8 +10,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.xcion.player.R;
 import com.xcion.player.pojo.StreamTask;
-import com.xcion.player.stream.vh.GifViewHolder;
-import com.xcion.player.stream.vh.ImageViewHolder;
+import com.xcion.player.media.stream.vh.GifViewHolder;
+import com.xcion.player.media.stream.vh.ImageViewHolder;
 
 import java.util.ArrayList;
 
@@ -41,10 +41,10 @@ public class StreamAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = null;
         if (viewType == StreamTask.TYPE_IMAGE) {
-            view = LayoutInflater.from(mContext).inflate(R.layout.item_style_image_large, parent, false);
+            view = LayoutInflater.from(mContext).inflate(R.layout.fpv_stream_item_image_large, parent, false);
             return new ImageViewHolder(view);
         } else if (viewType == StreamTask.TYPE_GIF) {
-            view = LayoutInflater.from(mContext).inflate(R.layout.item_style_image_large, parent, false);
+            view = LayoutInflater.from(mContext).inflate(R.layout.fpv_stream_item_image_large, parent, false);
             return new ImageViewHolder(view);
         }
         return null;

@@ -1,4 +1,4 @@
-package com.xcion.player.audio;
+package com.xcion.player.media.callback;
 
 /**
  * author: Kern Hu

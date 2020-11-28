@@ -4,10 +4,19 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import com.xcion.player.enum1.CodecMode;
+import com.xcion.player.enum1.DisplayMode;
+import com.xcion.player.enum1.RenderMode;
+import com.xcion.player.enum1.Template;
+import com.xcion.player.media.Lifecycle;
 import com.xcion.player.pojo.MediaTask;
+
+import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,30 +28,7 @@ import androidx.annotation.Nullable;
  * describe: This is...
  */
 
-abstract class AbstractFlexoPlayerView extends FrameLayout implements Lifecycle<MediaTask> {
-
-    public enum Template {
-        JUST_STREAM,
-        JUST_VIDEO,
-        BOTH_AUDIO_STREAM,
-        BOTH_AUDIO_VIDEO,
-        ALL
-    }
-
-    public enum RenderMode {
-        SURFACE_VIEW,
-        TEXTURE_VIEW
-    }
-
-    public enum CodecMode {
-        SOFTWARE,
-        HARDWARE
-    }
-
-    public enum DisplayMode {
-        FIT_PARENT,
-        ORIGIN
-    }
+abstract class AbstractFlexoPlayerView extends FrameLayout implements Lifecycle<ArrayList<MediaTask>>, GestureDetector.OnGestureListener {
 
     private int template;
     private int displayOrientation;
@@ -56,6 +42,9 @@ abstract class AbstractFlexoPlayerView extends FrameLayout implements Lifecycle<
     private int loadingViewRes;
     private int controllerViewRes;
     private int taskBarViewRes;
+
+    private GestureDetector mGestureDetector;
+    private boolean isShowUI;
 
     public AbstractFlexoPlayerView(@NonNull Context context) {
         this(context, null);
@@ -79,10 +68,10 @@ abstract class AbstractFlexoPlayerView extends FrameLayout implements Lifecycle<
 
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.FlexoPlayerView);
         try {
-            template = a.getInt(R.styleable.FlexoPlayerView_fpv_template, FlexoPlayerView.Template.ALL.ordinal());
-            renderMode = a.getInt(R.styleable.FlexoPlayerView_fpv_render_mode, FlexoPlayerView.RenderMode.SURFACE_VIEW.ordinal());
-            codecMode = a.getInt(R.styleable.FlexoPlayerView_fpv_codec_mode, FlexoPlayerView.CodecMode.HARDWARE.ordinal());
-            displayMode = a.getInt(R.styleable.FlexoPlayerView_fpv_display_mode, FlexoPlayerView.DisplayMode.FIT_PARENT.ordinal());
+            template = a.getInt(R.styleable.FlexoPlayerView_fpv_template, Template.JUST_STREAM.ordinal());
+            renderMode = a.getInt(R.styleable.FlexoPlayerView_fpv_render_mode, RenderMode.SURFACE_VIEW.ordinal());
+            codecMode = a.getInt(R.styleable.FlexoPlayerView_fpv_codec_mode, CodecMode.HARDWARE.ordinal());
+            displayMode = a.getInt(R.styleable.FlexoPlayerView_fpv_display_mode, DisplayMode.FIT_PARENT.ordinal());
             coverRes = a.getResourceId(R.styleable.FlexoPlayerView_fpv_cover_res, R.drawable.default_video_cover);
             loadingViewRes = a.getResourceId(R.styleable.FlexoPlayerView_fpv_loading_view_res, R.layout.fpv_loading_view);
             controllerViewRes = a.getResourceId(R.styleable.FlexoPlayerView_fpv_controller_view_res, R.layout.fpv_controller_view);
@@ -90,6 +79,9 @@ abstract class AbstractFlexoPlayerView extends FrameLayout implements Lifecycle<
         } finally {
             a.recycle();
         }
+
+
+        mGestureDetector = new GestureDetector(getContext(), this);
     }
 
     public void setTemplate(Template template) {
@@ -198,4 +190,49 @@ abstract class AbstractFlexoPlayerView extends FrameLayout implements Lifecycle<
 
     protected abstract void onCreateLive();
 
+    protected abstract void onTaskBarInAnim();
+
+    protected abstract void onTaskBarOutAnim();
+
+    protected abstract void onControllerInAnim();
+
+    protected abstract void onControllerOutAnim();
+
+    protected abstract void onShowUi(boolean isShowUI);
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return mGestureDetector.onTouchEvent(event);
+    }
+
+    @Override
+    public boolean onDown(MotionEvent motionEvent) {
+        return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent motionEvent) {
+
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent motionEvent) {
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent motionEvent) {
+        isShowUI = !isShowUI;
+        onShowUi(isShowUI);
+    }
+
+    @Override
+    public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
+        return false;
+    }
 }
