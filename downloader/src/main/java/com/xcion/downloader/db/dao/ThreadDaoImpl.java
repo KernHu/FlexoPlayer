@@ -143,4 +143,17 @@ public class ThreadDaoImpl implements ThreadDao {
         }
         return false;
     }
+
+    @Override
+    public boolean isExists(String url, int threadId) {
+        SQLiteDatabase db = mHelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery("select * from " + ConfigHelp.DB_TABLE_THREAD + " where url = ? and thread_id = ?",
+                new String[]{url, String.valueOf(threadId)});
+        while (cursor.moveToNext()) {
+            cursor.close();
+            db.close();
+            return true;
+        }
+        return false;
+    }
 }

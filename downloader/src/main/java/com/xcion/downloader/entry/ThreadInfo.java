@@ -1,6 +1,7 @@
 package com.xcion.downloader.entry;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * @Author: Kern Hu
@@ -12,7 +13,7 @@ import java.io.Serializable;
  * @Description: java类作用描述
  * @UpdateRemark: 更新说明
  */
-public class ThreadInfo implements Serializable {
+public class ThreadInfo implements Parcelable {
 
     public static final int STATE_PAUSE = 1;
     public static final int STATE_DOWNLOADING = 2;
@@ -36,6 +37,27 @@ public class ThreadInfo implements Serializable {
         this.current = current;
         this.state = state;
     }
+
+    protected ThreadInfo(Parcel in) {
+        threadId = in.readInt();
+        url = in.readString();
+        start = in.readLong();
+        ends = in.readLong();
+        current = in.readLong();
+        state = in.readInt();
+    }
+
+    public static final Creator<ThreadInfo> CREATOR = new Creator<ThreadInfo>() {
+        @Override
+        public ThreadInfo createFromParcel(Parcel in) {
+            return new ThreadInfo(in);
+        }
+
+        @Override
+        public ThreadInfo[] newArray(int size) {
+            return new ThreadInfo[size];
+        }
+    };
 
     public int getThreadId() {
         return threadId;
@@ -95,5 +117,20 @@ public class ThreadInfo implements Serializable {
                 ", current=" + current +
                 ", state=" + state +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(threadId);
+        parcel.writeString(url);
+        parcel.writeLong(start);
+        parcel.writeLong(ends);
+        parcel.writeLong(current);
+        parcel.writeInt(state);
     }
 }

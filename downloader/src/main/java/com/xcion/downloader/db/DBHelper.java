@@ -26,6 +26,7 @@ public class DBHelper extends SQLiteOpenHelper {
             + "url text,"
             + "filename text,"
             + "mimetype text,"
+            + "filepath text,"
             + "length integer,"
             + "state integer,"
             + "error text"

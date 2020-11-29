@@ -3,6 +3,9 @@ package com.xcion.downloader.listener;
 import com.xcion.downloader.entry.FileInfo;
 import com.xcion.downloader.entry.ThreadInfo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @Author: Kern Hu
  * @E-mail: sky580@126.com
@@ -19,7 +22,7 @@ public abstract class DownloadClient {
 
     public abstract void onStarted(FileInfo fileInfo);
 
-    public abstract void onDownloading(FileInfo fileInfo, ThreadInfo threadInfo);
+    public abstract void onDownloading(FileInfo fileInfo, ArrayList<ThreadInfo> threadInfo);
 
     public abstract void onStopped(FileInfo fileInfo);
 

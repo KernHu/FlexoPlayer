@@ -1,6 +1,7 @@
 package com.xcion.downloader.entry;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * @Author: Kern Hu
@@ -12,7 +13,7 @@ import java.io.Serializable;
  * @Description: java类作用描述
  * @UpdateRemark: 更新说明
  */
-public class FileInfo implements Serializable {
+public class FileInfo implements Parcelable {
 
     public static final int STATE_OK = 1;           //准备OK
     public static final int STATE_DOWNLOADING = 2;  //正在下载
@@ -24,6 +25,7 @@ public class FileInfo implements Serializable {
     private String url = "";
     private String fileName = "";
     private String mimeType = "";
+    private String filePath = "";
     private long length = 0;
     private int state = 0;
     private String error = "";
@@ -40,11 +42,13 @@ public class FileInfo implements Serializable {
         this.error = error;
     }
 
-    public FileInfo(String url, String fileName, String mimeType, long length) {
+    public FileInfo(String url, String fileName, String mimeType, String filePath, long length, int state) {
         this.url = url;
         this.fileName = fileName;
         this.mimeType = mimeType;
+        this.filePath = filePath;
         this.length = length;
+        this.state = state;
     }
 
     public FileInfo(String url, int state, String error) {
@@ -52,6 +56,44 @@ public class FileInfo implements Serializable {
         this.state = state;
         this.error = error;
     }
+
+    protected FileInfo(Parcel in) {
+        url = in.readString();
+        fileName = in.readString();
+        mimeType = in.readString();
+        filePath = in.readString();
+        length = in.readLong();
+        state = in.readInt();
+        error = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(url);
+        dest.writeString(fileName);
+        dest.writeString(mimeType);
+        dest.writeString(filePath);
+        dest.writeLong(length);
+        dest.writeInt(state);
+        dest.writeString(error);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<FileInfo> CREATOR = new Creator<FileInfo>() {
+        @Override
+        public FileInfo createFromParcel(Parcel in) {
+            return new FileInfo(in);
+        }
+
+        @Override
+        public FileInfo[] newArray(int size) {
+            return new FileInfo[size];
+        }
+    };
 
     public String getUrl() {
         return url;
@@ -75,6 +117,14 @@ public class FileInfo implements Serializable {
 
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 
     public long getLength() {
@@ -107,6 +157,7 @@ public class FileInfo implements Serializable {
                 "url='" + url + '\'' +
                 ", fileName='" + fileName + '\'' +
                 ", mimeType='" + mimeType + '\'' +
+                ", filePath='" + filePath + '\'' +
                 ", length=" + length +
                 ", state=" + state +
                 ", error='" + error + '\'' +

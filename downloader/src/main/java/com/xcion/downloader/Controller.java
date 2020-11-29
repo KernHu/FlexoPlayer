@@ -17,4 +17,7 @@ public interface Controller {
     void pauseDownload();
 
     void cancelDownload();
+
+
+    boolean isDownloading();
 }

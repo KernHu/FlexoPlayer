@@ -38,4 +38,7 @@ interface ThreadDao {
     //是否存在
     boolean isExists(String url);
 
+
+    //是否存在
+    boolean isExists(String url,int threadId);
 }

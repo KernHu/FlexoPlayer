@@ -9,16 +9,16 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.util.Log;
-
-import androidx.annotation.NonNull;
 
 import com.xcion.downloader.entry.FileInfo;
+import com.xcion.downloader.entry.ThreadInfo;
 import com.xcion.downloader.listener.DownloadClient;
 import com.xcion.downloader.utils.PermissionsUtils;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
+import androidx.annotation.NonNull;
 
 
 /**
@@ -170,36 +170,57 @@ public class Downloader {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e("sos", ">>>>onReceive>>>>" + intent.getAction());
+            //
+            FileInfo fileInfo = (FileInfo) intent.getParcelableExtra(FileInfo.class.getName());
+            ArrayList<ThreadInfo> threadInfo = intent.getParcelableArrayListExtra(ThreadInfo.class.getName());
             switch (intent.getAction()) {
                 case Downloader.ACTION_JOIN_QUEUE:
 
+                    if (downloadClient != null) {
+                        downloadClient.onJoinQueue(fileInfo);
+                    }
 
                     break;
                 case Downloader.ACTION_STARTED:
 
+                    if (downloadClient != null) {
+                        downloadClient.onStarted(fileInfo);
+                    }
 
                     break;
                 case Downloader.ACTION_DOWNLOADING:
 
+                    if (downloadClient != null) {
+                        downloadClient.onDownloading(fileInfo, threadInfo);
+                    }
 
                     break;
                 case Downloader.ACTION_STOPPED:
 
+                    if (downloadClient != null) {
+                        downloadClient.onStopped(fileInfo);
+                    }
 
                     break;
                 case Downloader.ACTION_CANCELLED:
 
+                    if (downloadClient != null) {
+                        downloadClient.onCancelled(fileInfo);
+                    }
 
                     break;
-
                 case Downloader.ACTION_COMPLETED:
 
+                    if (downloadClient != null) {
+                        downloadClient.onCompleted(fileInfo);
+                    }
 
                     break;
-
                 case Downloader.ACTION_FAILURE:
 
+                    if (downloadClient != null) {
+                        downloadClient.onFailure(fileInfo);
+                    }
 
                     break;
             }

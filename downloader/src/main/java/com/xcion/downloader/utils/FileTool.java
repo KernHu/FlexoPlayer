@@ -63,8 +63,11 @@ public class FileTool {
      */
     public static File createFile(String path) {
         File file = new File(path);
-        if (!file.getParentFile().exists()) {
-            if (!createDir(file.getParent())) {
+
+        if (file.getParentFile() != null) {
+            if (!file.getParentFile().exists()) {
+                if (!createDir(file.getParent())) {
+                }
             }
         }
         // 创建目标文件

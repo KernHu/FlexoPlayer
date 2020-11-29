@@ -39,6 +39,7 @@ public class TaskDaoImpl implements TaskDao {
         values.put("url", info.getUrl());
         values.put("filename", info.getFileName());
         values.put("mimetype", info.getMimeType());
+        values.put("filepath", info.getFilePath());
         values.put("length", info.getLength());
         values.put("state", info.getState());
         values.put("error", info.getError());
@@ -59,6 +60,7 @@ public class TaskDaoImpl implements TaskDao {
         ContentValues values = new ContentValues();
         values.put("filename", info.getFileName());
         values.put("mimetype", info.getMimeType());
+        values.put("filepath", info.getFilePath());
         values.put("length", info.getLength());
         values.put("state", info.getState());
         values.put("error", info.getError());
@@ -76,6 +78,7 @@ public class TaskDaoImpl implements TaskDao {
             info.setUrl(cursor.getString(cursor.getColumnIndex("url")));
             info.setFileName(cursor.getString(cursor.getColumnIndex("filename")));
             info.setMimeType(cursor.getString(cursor.getColumnIndex("mimetype")));
+            info.setFilePath(cursor.getString(cursor.getColumnIndex("filepath")));
             info.setLength(cursor.getInt(cursor.getColumnIndex("length")));
             info.setState(cursor.getInt(cursor.getColumnIndex("state")));
             info.setError(cursor.getString(cursor.getColumnIndex("error")));
@@ -96,6 +99,7 @@ public class TaskDaoImpl implements TaskDao {
             info.setUrl(cursor.getString(cursor.getColumnIndex("url")));
             info.setFileName(cursor.getString(cursor.getColumnIndex("filename")));
             info.setMimeType(cursor.getString(cursor.getColumnIndex("mimetype")));
+            info.setFilePath(cursor.getString(cursor.getColumnIndex("filepath")));
             info.setLength(cursor.getInt(cursor.getColumnIndex("length")));
             info.setState(cursor.getInt(cursor.getColumnIndex("state")));
             info.setError(cursor.getString(cursor.getColumnIndex("error")));
@@ -117,6 +121,7 @@ public class TaskDaoImpl implements TaskDao {
             info.setUrl(cursor.getString(cursor.getColumnIndex("url")));
             info.setFileName(cursor.getString(cursor.getColumnIndex("filename")));
             info.setMimeType(cursor.getString(cursor.getColumnIndex("mimetype")));
+            info.setFilePath(cursor.getString(cursor.getColumnIndex("filepath")));
             info.setLength(cursor.getInt(cursor.getColumnIndex("length")));
             info.setState(cursor.getInt(cursor.getColumnIndex("state")));
             info.setError(cursor.getString(cursor.getColumnIndex("error")));

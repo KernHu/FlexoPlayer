@@ -5,15 +5,21 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.xcion.downloader.DownloadOptions;
 import com.xcion.downloader.Downloader;
 import com.xcion.downloader.entry.FileInfo;
+import com.xcion.downloader.entry.ThreadInfo;
+import com.xcion.downloader.listener.DownloadClient;
 import com.xcion.flexoplayer.image.ImageActivity;
 import com.xcion.flexoplayer.voice.VoiceActivity;
 import com.xcion.flexoplayer.voide.VideoActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -23,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView mItemDownload;
 
     private Intent mIntent;
-    Downloader mDownloader;
+    private Downloader mDownloader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,10 +51,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mDownloadOptions.setReadTimeout(1000 * 12);
         mDownloadOptions.setMaxThreadCount(5);
         mDownloadOptions.setMaxConcurrencyCount(4);
-        mDownloadOptions.setStoragePath("/com.xcion.webmage/");
+        mDownloadOptions.setStoragePath("/com.xcion.flexoplayer/");
         //
         mDownloader = new Downloader(this);
         mDownloader.setOptions(mDownloadOptions);
+        mDownloader.setDownloadClient(mDownloadClient);
+        //
     }
 
 
@@ -95,4 +103,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
+    DownloadClient mDownloadClient = new DownloadClient() {
+        @Override
+        public void onJoinQueue(FileInfo fileInfo) {
+            Log.e("sos", "onJoinQueue>" + fileInfo.toString());
+        }
+
+        @Override
+        public void onStarted(FileInfo fileInfo) {
+            Log.e("sos", "onStarted>" + fileInfo.toString());
+        }
+
+        @Override
+        public void onDownloading(FileInfo fileInfo, ArrayList<ThreadInfo> threadInfo) {
+            Log.e("sos", threadInfo.size() + ";;;;onDownloading>" + fileInfo.toString());
+        }
+
+        @Override
+        public void onStopped(FileInfo fileInfo) {
+            Log.e("sos", "onStopped>" + fileInfo.toString());
+        }
+
+        @Override
+        public void onCancelled(FileInfo fileInfo) {
+            Log.e("sos", "onCancelled>" + fileInfo.toString());
+        }
+
+        @Override
+        public void onCompleted(FileInfo fileInfo) {
+            Log.e("sos", "onCompleted>" + fileInfo.toString());
+        }
+
+        @Override
+        public void onFailure(FileInfo fileInfo) {
+            Log.e("sos", "onFailure>" + fileInfo.toString());
+        }
+    };
 }
