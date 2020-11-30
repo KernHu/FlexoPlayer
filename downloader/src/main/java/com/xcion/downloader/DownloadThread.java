@@ -5,11 +5,8 @@ import android.util.Log;
 
 import com.xcion.downloader.broadcast.Broadcaster;
 import com.xcion.downloader.db.DBLeader;
-import com.xcion.downloader.db.dao.TaskDaoImpl;
-import com.xcion.downloader.db.dao.ThreadDaoImpl;
 import com.xcion.downloader.entry.FileInfo;
 import com.xcion.downloader.entry.ThreadInfo;
-
 
 import java.io.File;
 import java.io.IOException;
@@ -116,11 +113,13 @@ public class DownloadThread implements Runnable, Controller {
             while ((len = is.read(buffer)) != -1) {
                 //取消
                 if (state == State.CANCEL) {
+                    Broadcaster.getInstance(reference.get()).setAction(Downloader.ACTION_CANCELLED).setFileInfo(fileInfo).send();
                     Log.e(TAG, "---" + fileInfo.getFileName() + "----" + threadInfo.getThreadId() + "-----取消下载！！！！");
                     break;
                 }
                 //暂停
                 if (state == State.PAUSE) {
+                    Broadcaster.getInstance(reference.get()).setAction(Downloader.ACTION_STOPPED).setFileInfo(fileInfo).send();
                     Log.e(TAG, "---" + fileInfo.getFileName() + "----" + threadInfo.getThreadId() + "-----暂停下载！！！！");
                     break;
                 }
@@ -128,11 +127,7 @@ public class DownloadThread implements Runnable, Controller {
                 //把下载数据数据写入文件
                 file.write(buffer, 0, len);
                 rangeLength += len;
-                if (threadInfo.getThreadId() == 0) {
-                    Log.e("sos-hm", "len>>>" + threadInfo.getStart() + rangeLength);
-                }
-
-                if (System.currentTimeMillis() - lastTimeMillis >= 1) {
+                if (System.currentTimeMillis() - lastTimeMillis >= 1000) {
                     lastTimeMillis = System.currentTimeMillis();
                     synchronized (DownloadThread.this) {
                         //
@@ -213,9 +208,9 @@ public class DownloadThread implements Runnable, Controller {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Log.e(TAG, "Exception>>>" + e.getMessage());
             isDownloading = false;
             //广播通知下载完成
+            threadInfo.setState(ThreadInfo.STATE_WAIT);
             fileInfo.setState(FileInfo.EXCEPTION);
             fileInfo.setError(e.toString());
             if (reference.get() != null) {
@@ -234,6 +229,8 @@ public class DownloadThread implements Runnable, Controller {
                 httpConn = null;
             }
         }
+        /*****************************************************************************************/
+
 
     }
 }

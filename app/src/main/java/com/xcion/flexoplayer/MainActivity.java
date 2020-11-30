@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         DownloadOptions mDownloadOptions = new DownloadOptions();
         mDownloadOptions.setConnectTimeout(1000 * 12);
         mDownloadOptions.setReadTimeout(1000 * 12);
-        mDownloadOptions.setMaxThreadCount(5);
+        mDownloadOptions.setMaxThreadCount(9);
         mDownloadOptions.setMaxConcurrencyCount(4);
         mDownloadOptions.setStoragePath("/com.xcion.flexoplayer/");
         //

@@ -10,6 +10,7 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.xcion.downloader.broadcast.Broadcaster;
 import com.xcion.downloader.entry.FileInfo;
 
 import androidx.annotation.NonNull;
@@ -168,8 +169,15 @@ public class DownloadService extends Service {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             FileInfo mFileInfo = (FileInfo) msg.obj;
+            //广播通知加入下载
+            Broadcaster.getInstance(getBaseContext())
+                    .setAction(Downloader.ACTION_JOIN_QUEUE)
+                    .setFileInfo(mFileInfo)
+                    .send();
+            //下载
             mDownloadTask = new DownloadTask(getBaseContext(), mFileInfo);
             mDownloadTask.download();
+
         }
     };
 }

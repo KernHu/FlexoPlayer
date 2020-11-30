@@ -109,7 +109,7 @@ public class DownloadTask implements Controller {
                         endL = mFileInfo.getLength();
                     } else {
                         startL = i * blockSize;
-                        endL = (i + 1) * blockSize;
+                        endL = (i + 1) * blockSize - 1;
                     }
                     ThreadInfo threadInfo = new ThreadInfo(i, mFileInfo.getUrl(), startL, endL, 0, ThreadInfo.STATE_WAIT);
                     /****** ---------------------- ThreadInfo同步到数据库 ---------------------- ******/
