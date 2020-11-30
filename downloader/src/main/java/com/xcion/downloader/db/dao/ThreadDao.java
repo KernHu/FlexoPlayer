@@ -24,7 +24,7 @@ interface ThreadDao {
     void deleteThread(String url);
 
     //更新下载信息
-    void updateThread(String url, ThreadInfo info);
+    void updateThread(String url, int threadId, ThreadInfo info);
 
     //根据url查询下载的信息
     List<ThreadInfo> getThreadByUrl(String url);
@@ -40,5 +40,5 @@ interface ThreadDao {
 
 
     //是否存在
-    boolean isExists(String url,int threadId);
+    boolean isExists(String url, int threadId);
 }

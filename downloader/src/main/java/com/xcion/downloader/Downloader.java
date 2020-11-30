@@ -10,6 +10,8 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
+import androidx.annotation.NonNull;
+
 import com.xcion.downloader.entry.FileInfo;
 import com.xcion.downloader.entry.ThreadInfo;
 import com.xcion.downloader.listener.DownloadClient;
@@ -17,8 +19,6 @@ import com.xcion.downloader.utils.PermissionsUtils;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
-
-import androidx.annotation.NonNull;
 
 
 /**
@@ -63,9 +63,7 @@ public class Downloader {
 
         //权限管理
         permissionsUtils = new PermissionsUtils(context);
-        //启动下载服务
-        Intent mIntent = new Intent(context, DownloadService.class);
-        context.bindService(mIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
+
         //启动下载广播
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Downloader.ACTION_JOIN_QUEUE);
@@ -76,6 +74,10 @@ public class Downloader {
         intentFilter.addAction(Downloader.ACTION_COMPLETED);
         intentFilter.addAction(Downloader.ACTION_FAILURE);
         context.registerReceiver(mBroadcastReceiver, intentFilter);
+
+        //启动下载服务
+        Intent mIntent = new Intent(context, DownloadService.class);
+        context.bindService(mIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     public static void setOptions(DownloadOptions options) {
@@ -171,7 +173,7 @@ public class Downloader {
         @Override
         public void onReceive(Context context, Intent intent) {
             //
-            FileInfo fileInfo = (FileInfo) intent.getParcelableExtra(FileInfo.class.getName());
+            FileInfo fileInfo = intent.getParcelableExtra(FileInfo.class.getName());
             ArrayList<ThreadInfo> threadInfo = intent.getParcelableArrayListExtra(ThreadInfo.class.getName());
             switch (intent.getAction()) {
                 case Downloader.ACTION_JOIN_QUEUE:

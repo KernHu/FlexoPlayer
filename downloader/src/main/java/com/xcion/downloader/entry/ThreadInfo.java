@@ -15,6 +15,7 @@ import android.os.Parcelable;
  */
 public class ThreadInfo implements Parcelable {
 
+    public static final int STATE_WAIT = 0;
     public static final int STATE_PAUSE = 1;
     public static final int STATE_DOWNLOADING = 2;
     public static final int STATE_COMPLETE = 3;

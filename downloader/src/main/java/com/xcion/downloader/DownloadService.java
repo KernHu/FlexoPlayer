@@ -10,16 +10,19 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.xcion.downloader.entry.FileInfo;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.xcion.downloader.entry.FileInfo;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+
 
 /**
  * @Author: Kern Hu
@@ -55,6 +58,7 @@ public class DownloadService extends Service {
             }
         }
     }
+
 
     @Override
     public void onCreate() {
@@ -100,7 +104,7 @@ public class DownloadService extends Service {
                     /******************************************************************************************/
                     if (BuildConfig.DEBUG) {
                         for (String key : httpConn.getHeaderFields().keySet()) {
-                            Log.d(TAG, "key=" + key + "<<<>>>value=" + httpConn.getHeaderFields().get(key).toString());
+                            Log.i("HTTP解析URL", "key=" + key + "<<<>>>value=" + httpConn.getHeaderFields().get(key).toString());
                         }
                     }
                     /******************************************************************************************/
@@ -127,17 +131,17 @@ public class DownloadService extends Service {
                             fileLength = fileLength >= 0 ? httpConn.getContentLength() : 0;
                         }
 
-                        //无法获取长度
+                        //文件长度小于等于0时则解析失败，反之成功继续下载
                         if (fileLength <= 0) {
                             fileInfo.setState(FileInfo.HTTP_ERROR_URL);
                             fileInfo.setError("could not get file length by the url.");
+                        } else {
+                            /*****>>>>>>>>>>>>>>>>>>>>>>>>*****/
+                            fileInfo.setState(FileInfo.STATE_OK);
                         }
-
-                        /*****>>>>>>>>>>>>>>>>>>>>>>>>*****/
                         fileInfo.setFileName(fileName);
                         fileInfo.setMimeType(mimeType);
                         fileInfo.setLength(fileLength);
-                        fileInfo.setState(FileInfo.STATE_OK);
                     } else {
                         fileInfo.setState(FileInfo.HTTP_ERROR_URL);
                         fileInfo.setError(httpConn.getResponseMessage());

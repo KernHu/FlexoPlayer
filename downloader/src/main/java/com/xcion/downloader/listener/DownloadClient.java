@@ -1,10 +1,10 @@
 package com.xcion.downloader.listener;
 
+
 import com.xcion.downloader.entry.FileInfo;
 import com.xcion.downloader.entry.ThreadInfo;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @Author: Kern Hu

@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.xcion.downloader.db.ConfigHelp;
 import com.xcion.downloader.db.DBHelper;
-import com.xcion.downloader.entry.FileInfo;
+import com.xcion.downloader.db.DatabaseManager;
 import com.xcion.downloader.entry.ThreadInfo;
 
 import java.util.ArrayList;
@@ -36,7 +36,8 @@ public class ThreadDaoImpl implements ThreadDao {
 
     @Override
     public void insertThread(ThreadInfo info) {
-        SQLiteDatabase db = mHelper.getWritableDatabase();
+        DatabaseManager mDatabaseManager = DatabaseManager.getInstance(mHelper);
+        SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("thread_id", info.getThreadId());
         values.put("url", info.getUrl());
@@ -45,19 +46,21 @@ public class ThreadDaoImpl implements ThreadDao {
         values.put("current", info.getCurrent());
         values.put("state", info.getState());
         db.insert(ConfigHelp.DB_TABLE_THREAD, null, values);
-        db.close();
+        mDatabaseManager.closeDatabase();
     }
 
     @Override
     public void deleteThread(String url) {
-        SQLiteDatabase db = mHelper.getWritableDatabase();
+        DatabaseManager mDatabaseManager = DatabaseManager.getInstance(mHelper);
+        SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
         db.delete(ConfigHelp.DB_TABLE_THREAD, "url?", new String[]{url});
-        db.close();
+        mDatabaseManager.closeDatabase();
     }
 
     @Override
-    public void updateThread(String url, ThreadInfo info) {
-        SQLiteDatabase db = mHelper.getWritableDatabase();
+    public void updateThread(String url, int threadId, ThreadInfo info) {
+        DatabaseManager mDatabaseManager = DatabaseManager.getInstance(mHelper);
+        SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("thread_id", info.getThreadId());
         values.put("url", info.getUrl());
@@ -65,13 +68,14 @@ public class ThreadDaoImpl implements ThreadDao {
         values.put("ends", info.getEnds());
         values.put("current", info.getCurrent());
         values.put("state", info.getState());
-        db.update(ConfigHelp.DB_TABLE_THREAD, values, "url=?", new String[]{"url"});
-        db.close();
+        db.update(ConfigHelp.DB_TABLE_THREAD, values, "url=? and thread_id=?", new String[]{url, String.valueOf(threadId)});
+        mDatabaseManager.closeDatabase();
     }
 
     @Override
     public List<ThreadInfo> getThreadByUrl(String url) {
-        SQLiteDatabase db = mHelper.getWritableDatabase();
+        DatabaseManager mDatabaseManager = DatabaseManager.getInstance(mHelper);
+        SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
         Cursor cursor = db.rawQuery("select * from " + ConfigHelp.DB_TABLE_THREAD + " where url = ?", new String[]{url});
         List<ThreadInfo> threadInfos = new ArrayList<>();
         while (cursor.moveToNext()) {
@@ -85,14 +89,15 @@ public class ThreadDaoImpl implements ThreadDao {
             threadInfos.add(info);
         }
         cursor.close();
-        db.close();
+        mDatabaseManager.closeDatabase();
         return threadInfos;
     }
 
     @Override
     public List<ThreadInfo> getAllThreads() {
         List<ThreadInfo> list = new ArrayList<>();
-        SQLiteDatabase db = mHelper.getWritableDatabase();
+        DatabaseManager mDatabaseManager = DatabaseManager.getInstance(mHelper);
+        SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
         Cursor cursor = db.rawQuery("select * from " + ConfigHelp.DB_TABLE_THREAD, new String[]{});
         ThreadInfo info = null;
         while (cursor.moveToNext()) {
@@ -106,14 +111,15 @@ public class ThreadDaoImpl implements ThreadDao {
             list.add(info);
         }
         cursor.close();
-        db.close();
+        mDatabaseManager.closeDatabase();
         return list;
     }
 
     @Override
     public List<ThreadInfo> getAllThreadsBy(int state) {
         List<ThreadInfo> list = new ArrayList<>();
-        SQLiteDatabase db = mHelper.getWritableDatabase();
+        DatabaseManager mDatabaseManager = DatabaseManager.getInstance(mHelper);
+        SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
         Cursor cursor = db.rawQuery("select * from " + ConfigHelp.DB_TABLE_THREAD + " where state = ?", new String[]{String.valueOf(state)});
         ThreadInfo info = null;
         while (cursor.moveToNext()) {
@@ -127,18 +133,19 @@ public class ThreadDaoImpl implements ThreadDao {
             list.add(info);
         }
         cursor.close();
-        db.close();
+        mDatabaseManager.closeDatabase();
         return list;
     }
 
     @Override
     public boolean isExists(String url) {
-        SQLiteDatabase db = mHelper.getWritableDatabase();
+        DatabaseManager mDatabaseManager = DatabaseManager.getInstance(mHelper);
+        SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
         Cursor cursor = db.rawQuery("select * from " + ConfigHelp.DB_TABLE_THREAD + " where url = ?",
                 new String[]{url});
         while (cursor.moveToNext()) {
             cursor.close();
-            db.close();
+            mDatabaseManager.closeDatabase();
             return true;
         }
         return false;
@@ -146,12 +153,13 @@ public class ThreadDaoImpl implements ThreadDao {
 
     @Override
     public boolean isExists(String url, int threadId) {
-        SQLiteDatabase db = mHelper.getWritableDatabase();
+        DatabaseManager mDatabaseManager = DatabaseManager.getInstance(mHelper);
+        SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
         Cursor cursor = db.rawQuery("select * from " + ConfigHelp.DB_TABLE_THREAD + " where url = ? and thread_id = ?",
                 new String[]{url, String.valueOf(threadId)});
         while (cursor.moveToNext()) {
             cursor.close();
-            db.close();
+            mDatabaseManager.closeDatabase();
             return true;
         }
         return false;

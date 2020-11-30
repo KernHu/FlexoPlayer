@@ -1,18 +1,23 @@
 package com.xcion.downloader;
 
+import android.content.Context;
 import android.util.Log;
 
+import com.xcion.downloader.broadcast.Broadcaster;
 import com.xcion.downloader.db.dao.TaskDaoImpl;
 import com.xcion.downloader.db.dao.ThreadDaoImpl;
 import com.xcion.downloader.entry.FileInfo;
 import com.xcion.downloader.entry.ThreadInfo;
 
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * @Author: Kern Hu
@@ -26,13 +31,14 @@ import java.net.URL;
  */
 public class DownloadThread implements Runnable, Controller {
 
-    public static final String TAG = "DownloadThread";
-
-    private FileInfo fileInfo;
-    private ThreadInfo threadInfo;
+    public static final String TAG = "downloader";
 
     private TaskDaoImpl mTaskDaoImpl;
     private ThreadDaoImpl mThreadDaoImpl;
+
+    private WeakReference<Context> reference;
+    private FileInfo fileInfo;
+    private ThreadInfo threadInfo;
 
     private String tempPath;
     private State state = State.START;
@@ -40,6 +46,9 @@ public class DownloadThread implements Runnable, Controller {
     private int mStopNum = 0;
     private int mCompleteThreadNum = 0;
     private boolean isDownloading;
+    private long lastTimeMillis;
+    private long rangeLength;
+
 
     public enum State {
         START,
@@ -67,15 +76,16 @@ public class DownloadThread implements Runnable, Controller {
         return isDownloading;
     }
 
-    public void setTaskDaoImpl(TaskDaoImpl mTaskDaoImpl) {
-        this.mTaskDaoImpl = mTaskDaoImpl;
+    public void setTaskDaoImpl(TaskDaoImpl taskDaoImpl) {
+        this.mTaskDaoImpl = taskDaoImpl;
     }
 
-    public void setThreadDaoImpl(ThreadDaoImpl mThreadDaoImpl) {
-        this.mThreadDaoImpl = mThreadDaoImpl;
+    public void setThreadDaoImpl(ThreadDaoImpl threadDaoImpl) {
+        this.mThreadDaoImpl = threadDaoImpl;
     }
 
-    public DownloadThread(FileInfo fileInfo, ThreadInfo threadInfo) {
+    public DownloadThread(Context context, FileInfo fileInfo, ThreadInfo threadInfo) {
+        this.reference = new WeakReference<>(context);
         this.fileInfo = fileInfo;
         this.threadInfo = threadInfo;
         tempPath = Downloader.DownloadOptions.getStoragePath() + "/temp/" + fileInfo.getFileName() + "_" + threadInfo.getThreadId() + ".properties";
@@ -103,7 +113,7 @@ public class DownloadThread implements Runnable, Controller {
             RandomAccessFile file = new RandomAccessFile(fileInfo.getFilePath(), "rwd");
             //设置每条线程写入文件的位置
             file.seek(threadInfo.getStart());
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[1024 * 4];
             int len;
             //当前子线程的下载位置
             long currentLocation = threadInfo.getStart();
@@ -121,11 +131,33 @@ public class DownloadThread implements Runnable, Controller {
                 isDownloading = true;
                 //把下载数据数据写入文件
                 file.write(buffer, 0, len);
-                synchronized (DownloadThread.this) {
-                    threadInfo.setCurrent(threadInfo.getCurrent() + len);
-                    //实施进度
+                rangeLength += len;
+                if (threadInfo.getThreadId() == 0) {
+                    Log.e("sos-hm", "len>>>" + threadInfo.getStart() + rangeLength);
                 }
+
+                if (System.currentTimeMillis() - lastTimeMillis >= 1) {
+                    lastTimeMillis = System.currentTimeMillis();
+                    synchronized (DownloadThread.this) {
+                        //
+                        threadInfo.setCurrent(threadInfo.getStart() + rangeLength);
+                        //实施进度
+                        if (mThreadDaoImpl.isExists(threadInfo.getUrl(), threadInfo.getThreadId())) {
+                            mThreadDaoImpl.updateThread(threadInfo.getUrl(), threadInfo.getThreadId(), threadInfo);
+                        } else {
+                            mThreadDaoImpl.insertThread(threadInfo);
+                        }
+                        //取出发广播
+                        ArrayList<ThreadInfo> infos = (ArrayList<ThreadInfo>) mThreadDaoImpl.getThreadByUrl(fileInfo.getUrl());
+                        if (reference.get() != null) {
+                            Broadcaster.getInstance(reference.get()).setAction(Downloader.ACTION_DOWNLOADING).setFileInfo(fileInfo).setThreadInfo(infos).send();
+                        }
+                    }
+                }
+
                 currentLocation += len;
+
+                /**********************************************************************************/
             }
             file.close();
             is.close();
@@ -165,22 +197,38 @@ public class DownloadThread implements Runnable, Controller {
                 return;
             }
 
-            Log.i(TAG, "线程【" + threadInfo.getThreadId() + "】下载完毕");
+            Log.i(TAG, "线程【" + threadInfo.getThreadId() + "】下载完毕Ends=" + threadInfo.getEnds() + ";;;;Current=" + threadInfo.getCurrent());
             //writeConfig(fileInfo.getFileName() + "_state_" + threadInfo.getThreadId() 1 + "");
             //mListener.onChildComplete(dEntity.endLocation);
             mCompleteThreadNum++;
             if (mCompleteThreadNum == mThreadDaoImpl.getThreadByUrl(fileInfo.getUrl()).size()) {
+                //同步下载状态
+                fileInfo.setState(FileInfo.STATE_COMPLETED);
+                mTaskDaoImpl.updateTask(fileInfo.getUrl(), fileInfo);
+
                 File configFile = new File(tempPath);
                 if (configFile.exists()) {
                     configFile.delete();
                 }
+                //广播通知下载完成
+                if (reference.get() != null) {
+                    Broadcaster.getInstance(reference.get()).setAction(Downloader.ACTION_COMPLETED).setFileInfo(fileInfo).send();
+                }
+
                 //下载完成
                 isDownloading = false;
                 System.gc();
             }
         } catch (Exception e) {
             e.printStackTrace();
+            Log.e(TAG, "Exception>>>" + e.getMessage());
             isDownloading = false;
+            //广播通知下载完成
+            fileInfo.setState(FileInfo.EXCEPTION);
+            fileInfo.setError(e.toString());
+            if (reference.get() != null) {
+                Broadcaster.getInstance(reference.get()).setAction(Downloader.ACTION_FAILURE).setFileInfo(fileInfo).send();
+            }
         } finally {
             if (is != null) {
                 try {

@@ -7,7 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.xcion.downloader.db.ConfigHelp;
 import com.xcion.downloader.db.DBHelper;
+import com.xcion.downloader.db.DatabaseManager;
 import com.xcion.downloader.entry.FileInfo;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +36,8 @@ public class TaskDaoImpl implements TaskDao {
 
     @Override
     public void insertTask(FileInfo info) {
-        SQLiteDatabase db = mHelper.getWritableDatabase();
+        DatabaseManager mDatabaseManager = DatabaseManager.getInstance(mHelper);
+        SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("url", info.getUrl());
         values.put("filename", info.getFileName());
@@ -44,19 +47,21 @@ public class TaskDaoImpl implements TaskDao {
         values.put("state", info.getState());
         values.put("error", info.getError());
         db.insert(ConfigHelp.DB_TABLE_TASK, null, values);
-        db.close();
+        mDatabaseManager.closeDatabase();
     }
 
     @Override
     public void deleteTask(String url) {
-        SQLiteDatabase db = mHelper.getWritableDatabase();
+        DatabaseManager mDatabaseManager = DatabaseManager.getInstance(mHelper);
+        SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
         db.delete(ConfigHelp.DB_TABLE_TASK, "url?", new String[]{url});
-        db.close();
+        mDatabaseManager.closeDatabase();
     }
 
     @Override
     public void updateTask(String url, FileInfo info) {
-        SQLiteDatabase db = mHelper.getWritableDatabase();
+        DatabaseManager mDatabaseManager = DatabaseManager.getInstance(mHelper);
+        SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("filename", info.getFileName());
         values.put("mimetype", info.getMimeType());
@@ -64,13 +69,14 @@ public class TaskDaoImpl implements TaskDao {
         values.put("length", info.getLength());
         values.put("state", info.getState());
         values.put("error", info.getError());
-        db.update(ConfigHelp.DB_TABLE_TASK, values, "url=?", new String[]{"url"});
-        db.close();
+        db.update(ConfigHelp.DB_TABLE_TASK, values, "url=?", new String[]{url});
+        mDatabaseManager.closeDatabase();
     }
 
     @Override
     public FileInfo getTaskByUrl(String url) {
-        SQLiteDatabase db = mHelper.getWritableDatabase();
+        DatabaseManager mDatabaseManager = DatabaseManager.getInstance(mHelper);
+        SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
         Cursor cursor = db.rawQuery("select * from " + ConfigHelp.DB_TABLE_TASK + " where url = ?", new String[]{url});
         FileInfo info = null;
         while (cursor.moveToNext()) {
@@ -84,14 +90,15 @@ public class TaskDaoImpl implements TaskDao {
             info.setError(cursor.getString(cursor.getColumnIndex("error")));
         }
         cursor.close();
-        db.close();
+        mDatabaseManager.closeDatabase();
         return info;
     }
 
     @Override
     public List<FileInfo> getAllTasks() {
         List<FileInfo> list = new ArrayList<>();
-        SQLiteDatabase db = mHelper.getWritableDatabase();
+        DatabaseManager mDatabaseManager = DatabaseManager.getInstance(mHelper);
+        SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
         Cursor cursor = db.rawQuery("select * from " + ConfigHelp.DB_TABLE_TASK, new String[]{});
         FileInfo info = null;
         while (cursor.moveToNext()) {
@@ -106,14 +113,15 @@ public class TaskDaoImpl implements TaskDao {
             list.add(info);
         }
         cursor.close();
-        db.close();
+        mDatabaseManager.closeDatabase();
         return list;
     }
 
     @Override
     public List<FileInfo> getAllTasksBy(int state) {
         List<FileInfo> list = new ArrayList<>();
-        SQLiteDatabase db = mHelper.getWritableDatabase();
+        DatabaseManager mDatabaseManager = DatabaseManager.getInstance(mHelper);
+        SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
         Cursor cursor = db.rawQuery("select * from " + ConfigHelp.DB_TABLE_TASK + " where state = ?", new String[]{String.valueOf(state)});
         FileInfo info = null;
         while (cursor.moveToNext()) {
@@ -128,19 +136,20 @@ public class TaskDaoImpl implements TaskDao {
             list.add(info);
         }
         cursor.close();
-        db.close();
+        mDatabaseManager.closeDatabase();
         return list;
     }
 
 
     @Override
     public boolean isExists(String url) {
-        SQLiteDatabase db = mHelper.getWritableDatabase();
+        DatabaseManager mDatabaseManager = DatabaseManager.getInstance(mHelper);
+        SQLiteDatabase db = mDatabaseManager.getWritableDatabase();
         Cursor cursor = db.rawQuery("select * from " + ConfigHelp.DB_TABLE_TASK + " where url = ?",
                 new String[]{url});
         while (cursor.moveToNext()) {
             cursor.close();
-            db.close();
+            mDatabaseManager.closeDatabase();
             return true;
         }
         return false;
