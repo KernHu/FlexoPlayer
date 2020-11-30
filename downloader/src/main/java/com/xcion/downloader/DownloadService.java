@@ -23,7 +23,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-
 /**
  * @Author: Kern Hu
  * @E-mail: sky580@126.com
@@ -104,7 +103,7 @@ public class DownloadService extends Service {
                     /******************************************************************************************/
                     if (BuildConfig.DEBUG) {
                         for (String key : httpConn.getHeaderFields().keySet()) {
-                            Log.i("HTTP解析URL", "key=" + key + "<<<>>>value=" + httpConn.getHeaderFields().get(key).toString());
+                            Log.i("File信息解析", "key=" + key + "<<<>>>value=" + httpConn.getHeaderFields().get(key).toString());
                         }
                     }
                     /******************************************************************************************/

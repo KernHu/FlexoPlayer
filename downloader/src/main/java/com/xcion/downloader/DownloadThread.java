@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.xcion.downloader.broadcast.Broadcaster;
+import com.xcion.downloader.db.DBLeader;
 import com.xcion.downloader.db.dao.TaskDaoImpl;
 import com.xcion.downloader.db.dao.ThreadDaoImpl;
 import com.xcion.downloader.entry.FileInfo;
@@ -33,8 +34,7 @@ public class DownloadThread implements Runnable, Controller {
 
     public static final String TAG = "downloader";
 
-    private TaskDaoImpl mTaskDaoImpl;
-    private ThreadDaoImpl mThreadDaoImpl;
+    private DBLeader mDBLeader;
 
     private WeakReference<Context> reference;
     private FileInfo fileInfo;
@@ -76,12 +76,8 @@ public class DownloadThread implements Runnable, Controller {
         return isDownloading;
     }
 
-    public void setTaskDaoImpl(TaskDaoImpl taskDaoImpl) {
-        this.mTaskDaoImpl = taskDaoImpl;
-    }
-
-    public void setThreadDaoImpl(ThreadDaoImpl threadDaoImpl) {
-        this.mThreadDaoImpl = threadDaoImpl;
+    public void setDBLeader(DBLeader leader) {
+        mDBLeader = leader;
     }
 
     public DownloadThread(Context context, FileInfo fileInfo, ThreadInfo threadInfo) {
@@ -142,13 +138,9 @@ public class DownloadThread implements Runnable, Controller {
                         //
                         threadInfo.setCurrent(threadInfo.getStart() + rangeLength);
                         //实施进度
-                        if (mThreadDaoImpl.isExists(threadInfo.getUrl(), threadInfo.getThreadId())) {
-                            mThreadDaoImpl.updateThread(threadInfo.getUrl(), threadInfo.getThreadId(), threadInfo);
-                        } else {
-                            mThreadDaoImpl.insertThread(threadInfo);
-                        }
+                        mDBLeader.updateOrReplaceThread(threadInfo);
                         //取出发广播
-                        ArrayList<ThreadInfo> infos = (ArrayList<ThreadInfo>) mThreadDaoImpl.getThreadByUrl(fileInfo.getUrl());
+                        ArrayList<ThreadInfo> infos = (ArrayList<ThreadInfo>) mDBLeader.getThreadByUrl(fileInfo.getUrl());
                         if (reference.get() != null) {
                             Broadcaster.getInstance(reference.get()).setAction(Downloader.ACTION_DOWNLOADING).setFileInfo(fileInfo).setThreadInfo(infos).send();
                         }
@@ -166,7 +158,7 @@ public class DownloadThread implements Runnable, Controller {
             if (state == State.CANCEL) {
                 synchronized (DownloadThread.this) {
                     mCancelNum++;
-                    if (mCancelNum == mThreadDaoImpl.getThreadByUrl(fileInfo.getUrl()).size()) {
+                    if (mCancelNum == mDBLeader.getThreadByUrl(fileInfo.getUrl()).size()) {
                         File tempFile = new File(tempPath);
                         File realFile = new File(fileInfo.getFilePath());
                         if (tempFile.exists()) {
@@ -189,7 +181,7 @@ public class DownloadThread implements Runnable, Controller {
                     String location = String.valueOf(currentLocation);
                     Log.i(TAG, "thread_" + threadInfo.getThreadId() + "_stop, stop location ==> " + currentLocation);
                     //writeConfig(fileInfo.getFileName() + "_record_" + threadInfo.getThreadId(), location);
-                    if (mStopNum == mThreadDaoImpl.getThreadByUrl(fileInfo.getUrl()).size()) {
+                    if (mStopNum == mDBLeader.getThreadByUrl(fileInfo.getUrl()).size()) {
                         //暂停回调
                         System.gc();
                     }
@@ -201,10 +193,10 @@ public class DownloadThread implements Runnable, Controller {
             //writeConfig(fileInfo.getFileName() + "_state_" + threadInfo.getThreadId() 1 + "");
             //mListener.onChildComplete(dEntity.endLocation);
             mCompleteThreadNum++;
-            if (mCompleteThreadNum == mThreadDaoImpl.getThreadByUrl(fileInfo.getUrl()).size()) {
+            if (mCompleteThreadNum == mDBLeader.getThreadByUrl(fileInfo.getUrl()).size()) {
                 //同步下载状态
                 fileInfo.setState(FileInfo.STATE_COMPLETED);
-                mTaskDaoImpl.updateTask(fileInfo.getUrl(), fileInfo);
+                mDBLeader.updateOrReplaceFile(fileInfo);
 
                 File configFile = new File(tempPath);
                 if (configFile.exists()) {

@@ -1,8 +1,5 @@
 package com.xcion.flexoplayer;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,7 +16,9 @@ import com.xcion.flexoplayer.voice.VoiceActivity;
 import com.xcion.flexoplayer.voide.VideoActivity;
 
 import java.util.ArrayList;
-import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 

@@ -5,6 +5,7 @@ import android.util.Log;
 import android.util.SparseArray;
 
 import com.xcion.downloader.broadcast.Broadcaster;
+import com.xcion.downloader.db.DBLeader;
 import com.xcion.downloader.db.dao.TaskDaoImpl;
 import com.xcion.downloader.db.dao.ThreadDaoImpl;
 import com.xcion.downloader.entry.FileInfo;
@@ -33,14 +34,12 @@ public class DownloadTask implements Controller {
 
     private WeakReference<Context> reference;
     private FileInfo mFileInfo;
-    private TaskDaoImpl mTaskDaoImpl;
-    private ThreadDaoImpl mThreadDaoImpl;
+    private DBLeader mDBLeader;
 
     public DownloadTask(Context context, FileInfo fileInfo) {
         this.reference = new WeakReference<>(context);
         this.mFileInfo = fileInfo;
-        this.mTaskDaoImpl = new TaskDaoImpl(reference.get());
-        this.mThreadDaoImpl = new ThreadDaoImpl(reference.get());
+        mDBLeader = new DBLeader(new TaskDaoImpl(reference.get()), new ThreadDaoImpl(reference.get()));
         FileTool.mkdir(Downloader.DownloadOptions.getStoragePath());
     }
 
@@ -88,12 +87,8 @@ public class DownloadTask implements Controller {
             //在本地sd卡创建待下载文件
             mFileInfo.setFilePath(FileTool.createFile(Downloader.DownloadOptions.getStoragePath() + mFileInfo.getFileName()).getPath());
             //将文件信息同步到数据库
-            if (mTaskDaoImpl.isExists(mFileInfo.getUrl())) {
-                mTaskDaoImpl.updateTask(mFileInfo.getUrl(), mFileInfo);
-            } else {
-                mTaskDaoImpl.insertTask(mFileInfo);
-            }
-            Log.i(TAG, "开始下载>>>" + mTaskDaoImpl.getTaskByUrl(mFileInfo.getUrl()).toString());
+            mDBLeader.updateOrReplaceFile(mFileInfo);
+            Log.i(TAG, "开始下载>>>" + mDBLeader.getTaskByUrl(mFileInfo.getUrl()).toString());
             /***************************************************************************************/
 
             //
@@ -118,11 +113,7 @@ public class DownloadTask implements Controller {
                     }
                     ThreadInfo threadInfo = new ThreadInfo(i, mFileInfo.getUrl(), startL, endL, 0, ThreadInfo.STATE_WAIT);
                     /****** ---------------------- ThreadInfo同步到数据库 ---------------------- ******/
-                    if (mThreadDaoImpl.isExists(threadInfo.getUrl(), threadInfo.getThreadId())) {
-                        mThreadDaoImpl.updateThread(threadInfo.getUrl(), i, threadInfo);
-                    } else {
-                        mThreadDaoImpl.insertThread(threadInfo);
-                    }
+                    mDBLeader.updateOrReplaceThread(threadInfo);
                     /*********************************************************************************/
 
                     Object state = pro.getProperty(mFileInfo.getFileName() + "_state_" + i);
@@ -154,13 +145,12 @@ public class DownloadTask implements Controller {
                     }
 
                     DownloadThread task = new DownloadThread(reference.get(), mFileInfo, threadInfo);
-                    task.setTaskDaoImpl(mTaskDaoImpl);
-                    task.setThreadDaoImpl(mThreadDaoImpl);
+                    task.setDBLeader(mDBLeader);
                     tasks.put(i, new Thread(task));
                 }
                 /*******************************************************************************/
                 if (BuildConfig.DEBUG) {
-                    List<ThreadInfo> list = mThreadDaoImpl.getThreadByUrl(mFileInfo.getUrl());
+                    List<ThreadInfo> list = mDBLeader.getThreadByUrl(mFileInfo.getUrl());
                     for (ThreadInfo info : list) {
                         Log.i(TAG, "数据库中取出线程>>>" + info.toString());
                     }
