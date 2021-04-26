@@ -25,7 +25,7 @@ import java.util.ArrayList;
  * @UpdateDate: 2020/11/28 9:55
  * @Version: 1.0
  * @Description: java类作用描述
- * @UpdateRemark: 更新说明
+ * @UpdateRemark: 更新说明 
  */
 public class DownloadThread implements Runnable, Controller {
 
@@ -46,7 +46,7 @@ public class DownloadThread implements Runnable, Controller {
     private long lastTimeMillis;
     private long rangeLength;
 
-
+	//加入一些注释，测试一下SVN
     public enum State {
         START,
         PAUSE,
